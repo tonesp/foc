@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Correfoc: El Ball del Diable</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0d0c10;
+            color: #fff;
+            font-family: 'Press Start 2P', monospace, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        #game-wrapper {
+            position: relative;
+            width: 850px;
+            height: 600px;
+            max-width: 100vw;
+            max-height: 100vh;
+            border: 4px solid #ffaa00;
+            box-shadow: 0 0 35px rgba(255, 120, 0, 0.5);
+            background-color: #1a181d;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        /* HUD Superior */
+        #hud {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            background: linear-gradient(180deg, rgba(10,10,12,0.95) 0%, rgba(20,18,24,0.85) 100%);
+            border-bottom: 3px solid #ffaa00;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 10px;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .hud-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .hud-label {
+            font-size: 8px;
+            color: #aaa;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+
+        .hud-value {
+            font-size: 14px;
+            color: #ffdd00;
+            text-shadow: 2px 2px 0px #880000;
+        }
+
+        .hud-value.highlight {
+            font-size: 17px;
+            color: #00ff88;
+            text-shadow: 2px 2px 0px #005522;
+        }
+
+        /* Barra de Ritme */
+        #rhythm-bar-bg {
+            width: 100px;
+            height: 12px;
+            background: #222;
+            border: 2px solid #555;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        #rhythm-bar-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #ff3300, #ffcc00, #ffffaa);
+            transition: width 0.08s linear;
+        }
+
+        /* Barra Inferior de Trucs (Tàctils) */
+        #tricks-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 46px;
+            background: rgba(10, 10, 14, 0.95);
+            border-top: 2px solid #ffaa00;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            font-size: 7px;
+            color: #ffdd88;
+            z-index: 10;
+            padding: 0 4px;
+        }
+
+        .trick-slot {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            padding: 4px 6px;
+            border-radius: 4px;
+            background: #221c10;
+            border: 1px solid #aa7700;
+            cursor: pointer;
+            transition: transform 0.1s, background-color 0.2s;
+        }
+
+        .trick-slot:active {
+            transform: scale(0.93);
+            background: #ffaa00;
+            color: #111;
+        }
+
+        .trick-slot.cooldown {
+            opacity: 0.45;
+            filter: grayscale(80%);
+            pointer-events: none;
+        }
+
+        .trick-cd-label {
+            color: #ff5555;
+            font-size: 6.5px;
+        }
+
+        .key-badge {
+            background: #332a15;
+            border: 1px solid #ffaa00;
+            padding: 2px 3px;
+            border-radius: 3px;
+            color: #fff;
+            font-size: 6.5px;
+        }
+
+        /* Controls Tàctils per a Mòbil (D-Pad + Botó Espai) */
+        #mobile-controls {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            height: 110px;
+            display: none; /* S'activa automàticament en tàctil */
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 15;
+            pointer-events: none;
+        }
+
+        .dpad {
+            position: relative;
+            width: 110px;
+            height: 110px;
+            pointer-events: auto;
+        }
+
+        .dpad-btn {
+            position: absolute;
+            background: rgba(255, 170, 0, 0.35);
+            border: 2px solid #ffaa00;
+            color: #fff;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .dpad-btn:active {
+            background: rgba(255, 170, 0, 0.75);
+        }
+
+        #btn-up { top: 0; left: 35px; width: 40px; height: 35px; }
+        #btn-down { bottom: 0; left: 35px; width: 40px; height: 35px; }
+        #btn-left { top: 35px; left: 0; width: 35px; height: 40px; }
+        #btn-right { top: 35px; right: 0; width: 35px; height: 40px; }
+
+        #btn-action-space {
+            pointer-events: auto;
+            width: 85px;
+            height: 85px;
+            background: radial-gradient(circle, #ff5500 0%, #aa0000 100%);
+            border: 3px solid #ffcc00;
+            border-radius: 50%;
+            color: #fff;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(255, 80, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        #btn-action-space:active {
+            transform: scale(0.92);
+            background: radial-gradient(circle, #ff8800 0%, #cc2200 100%);
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Pantalles superposades (Menús) */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(12, 10, 16, 0.94);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 25px;
+            z-index: 30;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        h1 {
+            color: #ffcc00;
+            font-size: 22px;
+            text-shadow: 3px 3px 0 #b32400;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        p {
+            font-size: 9px;
+            line-height: 1.7;
+            color: #ddd;
+            max-width: 680px;
+            margin-bottom: 14px;
+        }
+
+        .controls-box {
+            background: rgba(255, 170, 0, 0.1);
+            border: 2px dashed #ffaa00;
+            padding: 10px 18px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            font-size: 8.5px;
+            line-height: 1.8;
+            color: #ffdd88;
+            text-align: left;
+        }
+
+        button.main-btn {
+            font-family: 'Press Start 2P', monospace, sans-serif;
+            font-size: 12px;
+            padding: 14px 26px;
+            background-color: #ffaa00;
+            color: #111;
+            border: 3px solid #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #994400;
+            transition: transform 0.1s, background-color 0.2s;
+            pointer-events: auto;
+        }
+
+        button.main-btn:hover {
+            background-color: #ffdd44;
+            transform: translateY(-2px);
+        }
+
+        button.main-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #994400;
+        }
+
+        .score-board {
+            background: #16141c;
+            border: 2px solid #ffaa00;
+            padding: 15px 25px;
+            margin-bottom: 20px;
+            font-size: 11px;
+            line-height: 2.1;
+            color: #fff;
+        }
+
+        @media (max-width: 860px) {
+            #game-wrapper {
+                width: 100vw;
+                height: 100vh;
+                border: none;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-wrapper">
+    <!-- Comptador Superior (HUD) -->
+    <div id="hud">
+        <div class="hud-item">
+            <span class="hud-label">INTENT</span>
+            <span class="hud-value" id="hud-attempt">1 / 3</span>
+        </div>
+        <div class="hud-item">
+            <span class="hud-label">TEMPS</span>
+            <span class="hud-value" id="hud-timer">20.0s</span>
+        </div>
+        <div class="hud-item">
+            <span class="hud-label">SOTA LES ESPURNES</span>
+            <span class="hud-value highlight" id="hud-under">0</span>
+        </div>
+        <div class="hud-item">
+            <span class="hud-label">RÈCORD RONDA</span>
+            <span class="hud-value" id="hud-peak">0</span>
+        </div>
+        <div class="hud-item">
+            <span class="hud-label">RITME DE BALL</span>
+            <div id="rhythm-bar-bg">
+                <div id="rhythm-bar-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Controls Tàctils per a Mòbil (apareixen automàticament en tàctil) -->
+    <div id="mobile-controls">
+        <div class="dpad">
+            <div class="dpad-btn" id="btn-up">▲</div>
+            <div class="dpad-btn" id="btn-down">▼</div>
+            <div class="dpad-btn" id="btn-left">◀</div>
+            <div class="dpad-btn" id="btn-right">▶</div>
+        </div>
+        <div id="btn-action-space">BALLAR<br>ESPACI</div>
+    </div>
+
+    <!-- Barra Inferior de Trucs (Tàctils i Teclat) -->
+    <div id="tricks-bar">
+        <div class="trick-slot" id="slot-bruixa" onclick="activarTrucTactic('bruixa')">
+            <div>🧹 <strong>BRUIXA</strong></div>
+            <div id="keys-bruixa"><span class="key-badge">◀◀</span> o <span class="key-badge">▶▶</span></div>
+        </div>
+        <div class="trick-slot" id="slot-roda" onclick="activarTrucTactic('roda')">
+            <div>🌪️ <strong>RODA</strong></div>
+            <div id="keys-roda"><span class="key-badge">◀▶</span> <span class="key-badge">ESP</span></div>
+        </div>
+        <div class="trick-slot" id="slot-salt" onclick="activarTrucTactic('salt')">
+            <div>💥 <strong>SALT</strong></div>
+            <div id="keys-salt"><span class="key-badge">▲▼</span> <span class="key-badge">ESP</span></div>
+        </div>
+        <div class="trick-slot" id="slot-carretillada" onclick="activarTrucTactic('carretillada')">
+            <div>🔥 <strong>SUPER</strong></div>
+            <div id="keys-carretillada"><span class="key-badge">◀▲▶</span> <span class="key-badge">ESP</span></div>
+        </div>
+    </div>
+
+    <canvas id="gameCanvas" width="850" height="600"></canvas>
+
+    <!-- Pantalla d'Inici -->
+    <div id="screen-start" class="overlay">
+        <h1>CORREFOC<br><span style="font-size:15px; color:#ff6600;">EL BALL DEL DIABLE</span></h1>
+        <p>Ets un diable al mig de la plaça. Tens <strong>20 segons</strong> abans del tro final per posar el màxim de gent a ballar sota el teu foc!</p>
+        <div class="controls-box">
+            📱 <strong> mòbil:</strong> Fletxes tàctils per moure't, botó central per ballar i clica directament als títols de trucs baix.<br>
+            💻 <strong> PC:</strong> Fletxes/WASD per moure't, ESPAI per ballar i combos de tecles per als trucs (es desactiven 5s després d'usar-los).
+        </div>
+        <button type="button" class="main-btn" onclick="this.blur(); iniciarJoc();">ENCENDRE LA METXA!</button>
+    </div>
+
+    <!-- Pantalla entre intents -->
+    <div id="screen-round" class="overlay hidden">
+        <h1 id="round-title">HA PETAT LA CARRETILLA!</h1>
+        <p id="round-desc">El tro final ha fet córrer a tothom, però la plaça vol més foc!</p>
+        <div class="score-board" id="round-scores"></div>
+        <button type="button" class="main-btn" onclick="this.blur(); seguentIntent();">SEGÜENT INTENT</button>
+    </div>
+
+    <!-- Pantalla Final -->
+    <div id="screen-gameover" class="overlay hidden">
+        <h1>FI DEL CORREFOC!</h1>
+        <p>El fum es dissipa a la plaça. Aquí tens el resultat de les teves 3 enceses:</p>
+        <div class="score-board" id="final-scores"></div>
+        <button type="button" class="main-btn" onclick="this.blur(); iniciarJoc();">TORNAR A JUGAR</button>
+    </div>
+</div>
+
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+const hudAttempt = document.getElementById('hud-attempt');
+const hudTimer = document.getElementById('hud-timer');
+const hudUnder = document.getElementById('hud-under');
+const hudPeak = document.getElementById('hud-peak');
+const rhythmFill = document.getElementById('rhythm-bar-fill');
+
+const screenStart = document.getElementById('screen-start');
+const screenRound = document.getElementById('screen-round');
+const screenGameOver = document.getElementById('screen-gameover');
+const mobileControls = document.getElementById('mobile-controls');
+
+// Detectar dispositiu tàctil per mostrar controls en pantalla
+let isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+if (isTouchDevice) {
+    mobileControls.style.display = 'flex';
+}
+
+const ROUND_DURATION = 20;
+const TRICK_COOLDOWN = 5.0;
+let gameState = 'MENU';
+let currentAttempt = 1;
+const maxAttempts = 3;
+let timeLeft = ROUND_DURATION;
+let lastFrameTime = 0;
+
+let underCount = 0;
+let roundPeak = 0;
+let attemptScores = [];
+
+let igniteProgress = 0;
+let explodeTimer = 0;
+let flashAlpha = 0;
+let screenShake = 0;
+let statusText = "";
+let countdownText = "3";
+let goBannerTimer = 0;
+
+let inputBuffer = [];
+let trickRadiusBonus = 0;
+let trickAnnouncement = { text: "", timer: 0, color: "#00ff88" };
+let shockwaves = [];
+
+const trickCooldowns = { bruixa: 0, roda: 0, salt: 0, carretillada: 0 };
+
+const trickDefaultLabels = {
+    bruixa: '<span class="key-badge">◀◀</span> o <span class="key-badge">▶▶</span>',
+    roda: '<span class="key-badge">◀▶</span> <span class="key-badge">ESP</span>',
+    salt: '<span class="key-badge">▲▼</span> <span class="key-badge">ESP</span>',
+    carretillada: '<span class="key-badge">◀▲▶</span> <span class="key-badge">ESP</span>'
+};
+
+const keys = {
+    ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false,
+    w: false, s: false, a: false, d: false,
+    W: false, S: false, A: false, D: false
+};
+
+const player = {
+    x: 425, y: 330, speed: 230, rhythm: 0, maceAngle: 0,
+    spinBoost: 0, jumpOffset: 0, jumpPhase: 0, facing: 1,
+    bruixaTimer: 0, bruixaDir: 1
+};
+
+const igniter = { x: -60, y: 330, maceAngle: 0 };
+
+let crowd = [];
+let sparks = [];
+let smoke = [];
+let cobbles = [];
+
+for (let i = 0; i < 95; i++) {
+    cobbles.push({
+        x: Math.random() * canvas.width,
+        y: 80 + Math.random() * (canvas.height - 130),
+        w: 16 + Math.random() * 20,
+        h: 10 + Math.random() * 10,
+        shade: Math.random() > 0.5 ? '#232028' : '#151319'
+    });
+}
+
+window.iniciarJoc = function() {
+    currentAttempt = 1;
+    attemptScores = [];
+    screenStart.classList.add('hidden');
+    screenRound.classList.add('hidden');
+    screenGameOver.classList.add('hidden');
+    startAttempt();
+};
+
+window.seguentIntent = function() {
+    currentAttempt++;
+    screenRound.classList.add('hidden');
+    startAttempt();
+};
+
+// Activar trucs directament des dels botons tàctils o clics
+window.activarTrucTactic = function(trickKey) {
+    if (gameState !== 'PLAYING') return;
+    if (trickCooldowns[trickKey] > 0) {
+        showCooldownWarning(trickKey.toUpperCase(), trickCooldowns[trickKey]);
+        return;
+    }
+
+    if (trickKey === 'bruixa') {
+        executeBruixaTrick(player.facing);
+    } else if (trickKey === 'roda') {
+        trickCooldowns.roda = TRICK_COOLDOWN;
+        executeTrick('RODA DE FOC!', 26, 40, 35, '#00ff88');
+    } else if (trickKey === 'salt') {
+        trickCooldowns.salt = TRICK_COOLDOWN;
+        executeTrick('SALT DEL DIABLE!', 26, 40, 35, '#ffdd00');
+    } else if (trickKey === 'carretillada') {
+        trickCooldowns.carretillada = TRICK_COOLDOWN;
+        executeTrick('SÚPER CARRETILLADA!', 42, 65, 55, '#00ffff');
+    }
+};
+
+// Gestió de botons tàctils mòbils (D-Pad i Espai)
+function setupTouchControls() {
+    const mapTouch = (id, keyName, isSpace = false) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (isSpace) {
+                if (gameState === 'PLAYING') triggerDanceSpace();
+            } else {
+                keys[keyName] = true;
+            }
+        });
+        el.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            if (!isSpace) keys[keyName] = false;
+        });
+    };
+
+    mapTouch('btn-up', 'ArrowUp');
+    mapTouch('btn-down', 'ArrowDown');
+    mapTouch('btn-left', 'ArrowLeft');
+    mapTouch('btn-right', 'ArrowRight');
+    mapTouch('btn-action-space', '', true);
+
+    // Doble toc tàctil a les fletxes esquerra/dreta per activar "La Bruixa"
+    let lastTapLeft = 0;
+    document.getElementById('btn-left').addEventListener('touchstart', (e) => {
+        const now = performance.now();
+        if (now - lastTapLeft < 350 && gameState === 'PLAYING' && trickCooldowns.bruixa <= 0) {
+            executeBruixaTrick(-1);
+        }
+        lastTapLeft = now;
+    });
+
+    let lastTapRight = 0;
+    document.getElementById('btn-right').addEventListener('touchstart', (e) => {
+        const now = performance.now();
+        if (now - lastTapRight < 350 && gameState === 'PLAYING' && trickCooldowns.bruixa <= 0) {
+            executeBruixaTrick(1);
+        }
+        lastTapRight = now;
+    });
+}
+setupTouchControls();
+
+function triggerDanceSpace() {
+    player.rhythm = Math.min(100, player.rhythm + 9);
+    player.spinBoost = 15;
+    burstSparks(player.x, player.y - 25, 14, true);
+}
+
+function getComboToken(e) {
+    if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') return 'L';
+    if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') return 'R';
+    if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') return 'U';
+    if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') return 'D';
+    if (e.code === 'Space' || e.key === ' ') return 'S';
+    return null;
+}
+
+window.addEventListener('keydown', (e) => {
+    if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
+        e.preventDefault();
+    }
+
+    if (keys.hasOwnProperty(e.key)) keys[e.key] = true;
+
+    if (gameState === 'PLAYING' && !e.repeat) {
+        const token = getComboToken(e);
+        if (token) {
+            const now = performance.now();
+            inputBuffer = inputBuffer.filter(item => now - item.time < 1200);
+            inputBuffer.push({ token, time: now });
+            if (inputBuffer.length > 6) inputBuffer.shift();
+
+            const seq = inputBuffer.map(i => i.token).join('');
+            const len = inputBuffer.length;
+
+            if (len >= 2) {
+                const last = inputBuffer[len - 1];
+                const prev = inputBuffer[len - 2];
+                const isDoubleSide = (last.token === 'L' && prev.token === 'L') || (last.token === 'R' && prev.token === 'R');
+
+                if (isDoubleSide && (last.time - prev.time < 420)) {
+                    if (trickCooldowns.bruixa <= 0) {
+                        const dir = last.token === 'L' ? -1 : 1;
+                        executeBruixaTrick(dir);
+                        inputBuffer = [];
+                        return;
+                    } else {
+                        showCooldownWarning('LA BRUIXA', trickCooldowns.bruixa);
+                        inputBuffer = [];
+                        return;
+                    }
+                }
+            }
+
+            if (seq.endsWith('LURS')) {
+                if (trickCooldowns.carretillada <= 0) {
+                    trickCooldowns.carretillada = TRICK_COOLDOWN;
+                    executeTrick('SÚPER CARRETILLADA!', 42, 65, 55, '#00ffff');
+                } else {
+                    showCooldownWarning('CARRETILLADA', trickCooldowns.carretillada);
+                }
+                inputBuffer = [];
+                return;
+            } else if (seq.endsWith('LRS')) {
+                if (trickCooldowns.roda <= 0) {
+                    trickCooldowns.roda = TRICK_COOLDOWN;
+                    executeTrick('RODA DE FOC!', 26, 40, 35, '#00ff88');
+                } else {
+                    showCooldownWarning('RODA DE FOC', trickCooldowns.roda);
+                }
+                inputBuffer = [];
+                return;
+            } else if (seq.endsWith('UDS')) {
+                if (trickCooldowns.salt <= 0) {
+                    trickCooldowns.salt = TRICK_COOLDOWN;
+                    executeTrick('SALT DEL DIABLE!', 26, 40, 35, '#ffdd00');
+                } else {
+                    showCooldownWarning('SALT DIABLE', trickCooldowns.salt);
+                }
+                inputBuffer = [];
+                return;
+            }
+        }
+
+        if (e.code === 'Space' || e.key === ' ') {
+            triggerDanceSpace();
+        }
+    }
+}, { passive: false });
+
+window.addEventListener('keyup', (e) => {
+    if (keys.hasOwnProperty(e.key)) keys[e.key] = false;
+});
+
+function showCooldownWarning(trickName, secondsLeft) {
+    trickAnnouncement = {
+        text: `${trickName} EN RECARREGA (${secondsLeft.toFixed(1)}s)`,
+        timer: 0.9,
+        color: '#ff6666'
+    };
+}
+
+function executeTrick(name, rhythmGain, radiusGain, sparkCount, color) {
+    player.rhythm = Math.min(100, player.rhythm + rhythmGain);
+    trickRadiusBonus = Math.min(85, trickRadiusBonus + radiusGain);
+    player.spinBoost = 32;
+    player.jumpOffset = 18;
+
+    trickAnnouncement = { text: name, timer: 1.3, color: color };
+
+    shockwaves.push({ x: player.x, y: player.y, r: 15, alpha: 1, color: color, lineWidth: 4 });
+    burstSparks(player.x, player.y - 28, sparkCount, true);
+}
+
+function executeBruixaTrick(dir) {
+    trickCooldowns.bruixa = TRICK_COOLDOWN;
+    player.bruixaTimer = 1.25;
+    player.bruixaDir = dir;
+    player.facing = dir;
+
+    player.rhythm = Math.min(100, player.rhythm + 30);
+    trickRadiusBonus = Math.min(85, trickRadiusBonus + 48);
+    player.jumpOffset = 14;
+
+    trickAnnouncement = { text: '🧹 LA BRUIXA! 🧹', timer: 1.3, color: '#ff77ff' };
+
+    shockwaves.push({ x: player.x, y: player.y, r: 12, alpha: 1, color: '#ff77ff', lineWidth: 4 });
+    burstJetSparks(player.x - dir * 18, player.y + 4, dir, 38);
+}
+
+function updateTricksBarUI() {
+    const tricks = ['bruixa', 'roda', 'salt', 'carretillada'];
+    tricks.forEach(key => {
+        const slotEl = document.getElementById(`slot-${key}`);
+        const keysEl = document.getElementById(`keys-${key}`);
+        const cd = trickCooldowns[key];
+
+        if (cd > 0) {
+            slotEl.classList.add('cooldown');
+            keysEl.innerHTML = `<span class="trick-cd-label">⏳ ${cd.toFixed(1)}s</span>`;
+        } else {
+            slotEl.classList.remove('cooldown');
+            keysEl.innerHTML = trickDefaultLabels[key];
+        }
+    });
+}
+
+function initCrowd() {
+    crowd = [];
+    const totalPeople = 55;
+    const hoodieColors = ['#3b4d54', '#2e3846', '#4a3b32', '#2c4230', '#483c52', '#52493c'];
+    const bandannaColors = ['#cc2222', '#ddaa00', '#2266aa', '#228844', '#aa2288'];
+
+    for (let i = 0; i < totalPeople; i++) {
+        let angle = Math.random() * Math.PI * 2;
+        let dist = 230 + Math.random() * 150;
+        let cx = Math.max(30, Math.min(canvas.width - 30, 425 + Math.cos(angle) * dist));
+        let cy = Math.max(105, Math.min(canvas.height - 60, 330 + Math.sin(angle) * dist));
+
+        crowd.push({
+            x: cx, y: cy, homeX: cx, homeY: cy, vx: 0, vy: 0,
+            speed: 42 + Math.random() * 36,
+            courageThreshold: 36 + Math.random() * 34,
+            hoodieColor: hoodieColors[Math.floor(Math.random() * hoodieColors.length)],
+            bandannaColor: bandannaColors[Math.floor(Math.random() * bandannaColors.length)],
+            hasStrawHat: Math.random() > 0.35,
+            bobPhase: Math.random() * Math.PI * 2,
+            isUnderSparks: false,
+            prefDist: 26 + Math.random() * 68,
+            prefAngle: Math.random() * Math.PI * 2
+        });
+    }
+}
+
+function startAttempt() {
+    player.x = 425;
+    player.y = 330;
+    player.rhythm = 0;
+    player.jumpOffset = 0;
+    player.maceAngle = -Math.PI / 3;
+    player.bruixaTimer = 0;
+
+    igniter.x = -50;
+    igniter.y = 330;
+
+    timeLeft = ROUND_DURATION;
+    underCount = 0;
+    roundPeak = 0;
+    igniteProgress = 0;
+    explodeTimer = 0;
+    flashAlpha = 0;
+    screenShake = 0;
+    goBannerTimer = 0;
+    trickRadiusBonus = 0;
+    inputBuffer = [];
+    sparks = [];
+    smoke = [];
+    shockwaves = [];
+
+    trickCooldowns.bruixa = 0;
+    trickCooldowns.roda = 0;
+    trickCooldowns.salt = 0;
+    trickCooldowns.carretillada = 0;
+    updateTricksBarUI();
+
+    initCrowd();
+    updateHUD();
+    gameState = 'IGNITING';
+}
+
+function burstSparks(originX, originY, count, isBigBurst = false, isExplosion = false) {
+    const maxRadius = 60 + (player.rhythm / 100) * 90 + trickRadiusBonus;
+    for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = isExplosion ? (120 + Math.random() * 380) : ((isBigBurst ? 95 : 40) + Math.random() * (maxRadius * 1.5));
+        sparks.push({
+            x: originX, y: originY,
+            vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+            life: isExplosion ? (0.5 + Math.random() * 0.8) : (0.25 + Math.random() * 0.45),
+            size: isExplosion ? (3 + Math.random() * 4) : (2 + Math.random() * 3),
+            color: Math.random() > 0.35 ? '#ffee00' : (Math.random() > 0.5 ? '#ff5500' : '#ffffff')
+        });
+    }
+}
+
+function burstJetSparks(originX, originY, dir, count) {
+    const baseAngle = dir === 1 ? Math.PI : 0;
+    for (let i = 0; i < count; i++) {
+        const angle = baseAngle + (Math.random() - 0.5) * 1.1;
+        const speed = 110 + Math.random() * 160;
+        sparks.push({
+            x: originX, y: originY,
+            vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+            life: 0.25 + Math.random() * 0.35,
+            size: 2.5 + Math.random() * 3,
+            color: Math.random() > 0.3 ? '#ffee00' : (Math.random() > 0.5 ? '#ff77ff' : '#ff5500')
+        });
+    }
+}
+
+function spawnSmoke(x, y, isHeavy = false) {
+    if (!isHeavy && Math.random() > 0.4) return;
+    const count = isHeavy ? 28 : 1;
+    for (let i = 0; i < count; i++) {
+        smoke.push({
+            x: x + (Math.random() - 0.5) * (isHeavy ? 45 : 14),
+            y: y - 20 + (Math.random() - 0.5) * (isHeavy ? 35 : 4),
+            vx: (Math.random() - 0.5) * (isHeavy ? 90 : 18),
+            vy: -15 - Math.random() * (isHeavy ? 65 : 20),
+            size: (isHeavy ? 12 : 6) + Math.random() * 12,
+            alpha: isHeavy ? 0.65 : 0.35
+        });
+    }
+}
+
+function triggerFinalExplosion() {
+    gameState = 'EXPLODING';
+    explodeTimer = 2.0;
+    player.bruixaTimer = 0;
+
+    attemptScores.push({ finalUnder: underCount, peakUnder: roundPeak });
+
+    const tipX = player.x + Math.cos(player.maceAngle) * 24;
+    const tipY = (player.y - 24 - player.jumpOffset) + Math.sin(player.maceAngle) * 24;
+
+    flashAlpha = 0.95;
+    screenShake = 18;
+    player.jumpOffset = 22;
+
+    shockwaves.push({ x: tipX, y: tipY, r: 10, alpha: 1, color: '#ffffff', lineWidth: 8 });
+    shockwaves.push({ x: tipX, y: tipY, r: 5, alpha: 1, color: '#ffaa00', lineWidth: 5 });
+
+    burstSparks(tipX, tipY, 160, true, true);
+    spawnSmoke(tipX, tipY, true);
+
+    crowd.forEach(p => {
+        const angle = Math.atan2(p.y - player.y, p.x - player.x);
+        p.vx = Math.cos(angle) * (190 + Math.random() * 90);
+        p.vy = Math.sin(angle) * (190 + Math.random() * 90);
+        p.isUnderSparks = false;
+    });
+}
+
+function update(dt) {
+    if (gameState === 'IGNITING') {
+        igniteProgress += dt;
+        if (igniteProgress < 1.0) {
+            countdownText = "3";
+            const t = igniteProgress / 1.0;
+            igniter.x = -50 + t * ((player.x - 42) - (-50));
+            igniter.maceAngle += dt * 10;
+            statusText = "EL COMPANY S'APROPA AMB FOC...";
+        } else if (igniteProgress < 2.0) {
+            countdownText = "2";
+            igniter.x = player.x - 42;
+            igniter.maceAngle = -Math.PI / 5;
+            player.maceAngle = -Math.PI * 0.75;
+            statusText = "ENCENENT LA METXA DE LA CARRETILLA!";
+            burstSparks(player.x - 21, player.y - 34, 4, false);
+            spawnSmoke(player.x - 21, player.y - 34);
+        } else if (igniteProgress < 3.0) {
+            countdownText = "1";
+            igniter.x -= 290 * dt;
+            igniter.maceAngle += dt * 12;
+            player.maceAngle += dt * 14;
+            player.rhythm = 35;
+            statusText = "CARRETILLA ENCESA! PREPARA'T PER BALLAR!";
+            burstSparks(player.x, player.y - 32, 7, true);
+            spawnSmoke(player.x, player.y - 32);
+        } else {
+            gameState = 'PLAYING';
+            goBannerTimer = 0.85;
+            player.rhythm = 40;
+            burstSparks(player.x, player.y - 30, 30, true);
+        }
+        updateParticles(dt);
+        return;
+    }
+
+    if (gameState === 'EXPLODING') {
+        explodeTimer -= dt;
+        flashAlpha = Math.max(0, flashAlpha - 2.2 * dt);
+        screenShake = Math.max(0, screenShake - 28 * dt);
+        player.jumpOffset = Math.max(0, player.jumpOffset - 35 * dt);
+
+        crowd.forEach(p => {
+            p.x += p.vx * dt;
+            p.y += p.vy * dt;
+            p.vx *= 0.94;
+            p.vy *= 0.94;
+            p.bobPhase += dt * 18;
+            p.x = Math.max(20, Math.min(canvas.width - 20, p.x));
+            p.y = Math.max(90, Math.min(canvas.height - 55, p.y));
+        });
+
+        updateParticles(dt);
+        if (explodeTimer <= 0) showRoundResults();
+        return;
+    }
+
+    if (gameState !== 'PLAYING') return;
+
+    if (goBannerTimer > 0) goBannerTimer -= dt;
+    if (trickAnnouncement.timer > 0) trickAnnouncement.timer -= dt;
+    if (trickRadiusBonus > 0) trickRadiusBonus = Math.max(0, trickRadiusBonus - 24 * dt);
+
+    for (let k in trickCooldowns) {
+        if (trickCooldowns[k] > 0) trickCooldowns[k] = Math.max(0, trickCooldowns[k] - dt);
+    }
+    updateTricksBarUI();
+
+    timeLeft -= dt;
+    if (timeLeft <= 0) {
+        timeLeft = 0;
+        updateHUD();
+        triggerFinalExplosion();
+        return;
+    }
+
+    let dx = 0, dy = 0;
+    if (keys.ArrowLeft || keys.a || keys.A) dx -= 1;
+    if (keys.ArrowRight || keys.d || keys.D) dx += 1;
+    if (keys.ArrowUp || keys.w || keys.W) dy -= 1;
+    if (keys.ArrowDown || keys.s || keys.S) dy += 1;
+
+    if (player.bruixaTimer > 0) {
+        player.bruixaTimer -= dt;
+        player.x += player.bruixaDir * (player.speed * 1.38) * dt;
+        player.y += dy * (player.speed * 0.85) * dt;
+        player.rhythm = Math.min(100, player.rhythm + 35 * dt);
+        player.jumpPhase += dt * 22;
+        player.jumpOffset = 9 + Math.sin(player.jumpPhase) * 3;
+
+        if (player.x <= 48 || player.x >= canvas.width - 48) {
+            player.bruixaDir *= -1;
+            player.facing = player.bruixaDir;
+        }
+    } else {
+        const isMoving = (dx !== 0 || dy !== 0);
+        if (isMoving) {
+            const len = Math.hypot(dx, dy);
+            dx /= len; dy /= len;
+            player.x += dx * player.speed * dt;
+            player.y += dy * player.speed * dt;
+            if (dx !== 0) player.facing = Math.sign(dx);
+            player.rhythm = Math.min(100, player.rhythm + 24 * dt);
+            player.jumpPhase += dt * 16;
+            player.jumpOffset = Math.abs(Math.sin(player.jumpPhase)) * 7;
+        } else {
+            player.rhythm = Math.max(0, player.rhythm - 48 * dt);
+            player.jumpOffset = Math.max(0, player.jumpOffset - 30 * dt);
+        }
+    }
+
+    player.x = Math.max(45, Math.min(canvas.width - 45, player.x));
+    player.y = Math.max(115, Math.min(canvas.height - 62, player.y));
+
+    if (player.bruixaTimer > 0) {
+        const rearX = player.x - player.bruixaDir * 22;
+        const rearY = (player.y - player.jumpOffset) + 6;
+        burstJetSparks(rearX, rearY, player.bruixaDir, 6);
+        spawnSmoke(rearX, rearY);
+    } else {
+        player.spinBoost = Math.max(0, player.spinBoost - 25 * dt);
+        const spinSpeed = 5 + (player.rhythm / 100) * 16 + player.spinBoost;
+        player.maceAngle += spinSpeed * dt;
+
+        const maceTipX = player.x + Math.cos(player.maceAngle) * 24;
+        const maceTipY = (player.y - 24 - player.jumpOffset) + Math.sin(player.maceAngle) * 24;
+
+        const preExplosionBoost = timeLeft < 3.0 ? 4 : 0;
+        const sparkRate = Math.floor(1 + (player.rhythm / 100) * 6 + preExplosionBoost);
+        burstSparks(maceTipX, maceTipY, sparkRate, false);
+        spawnSmoke(maceTipX, maceTipY);
+    }
+
+    const sparkZoneRadius = 52 + (player.rhythm / 100) * 80 + trickRadiusBonus;
+    let currentUnder = 0;
+
+    crowd.forEach(p => {
+        const distToDevil = Math.hypot(player.x - p.x, player.y - p.y);
+        const attractionRange = 75 + (player.rhythm / 100) * 280 + trickRadiusBonus * 1.8;
+
+        if (player.rhythm > p.courageThreshold && distToDevil < attractionRange) {
+            p.prefAngle += dt * 0.75;
+            const targetX = player.x + Math.cos(p.prefAngle) * p.prefDist;
+            const targetY = player.y + Math.sin(p.prefAngle) * p.prefDist;
+            const angleToTarget = Math.atan2(targetY - p.y, targetX - p.x);
+            const urgency = 0.38 + ((player.rhythm - p.courageThreshold) / 65) * 0.65 + (trickRadiusBonus > 10 ? 0.45 : 0);
+
+            p.vx = Math.cos(angleToTarget) * p.speed * urgency;
+            p.vy = Math.sin(angleToTarget) * p.speed * urgency;
+            p.bobPhase += dt * 13;
+        } else {
+            const distHome = Math.hypot(p.homeX - p.x, p.homeY - p.y);
+            if (distHome > 8) {
+                const angleHome = Math.atan2(p.homeY - p.y, p.homeX - p.x);
+                p.vx = Math.cos(angleHome) * (p.speed * 0.95);
+                p.vy = Math.sin(angleHome) * (p.speed * 0.95);
+                p.bobPhase += dt * 5;
+            } else {
+                p.vx *= 0.8; p.vy *= 0.8;
+            }
+        }
+
+        crowd.forEach(other => {
+            if (p === other) return;
+            const d = Math.hypot(p.x - other.x, p.y - other.y);
+            if (d < 20 && d > 0) {
+                p.vx += ((p.x - other.x) / d) * 35;
+                p.vy += ((p.y - other.y) / d) * 35;
+            }
+        });
+
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        p.x = Math.max(25, Math.min(canvas.width - 25, p.x));
+        p.y = Math.max(95, Math.min(canvas.height - 56, p.y));
+
+        const newDist = Math.hypot(player.x - p.x, player.y - p.y);
+        if (newDist <= sparkZoneRadius && player.rhythm > 20) {
+            p.isUnderSparks = true;
+            currentUnder++;
+        } else {
+            p.isUnderSparks = false;
+        }
+    });
+
+    underCount = currentUnder;
+    if (underCount > roundPeak) roundPeak = underCount;
+
+    updateParticles(dt);
+    updateHUD();
+}
+
+function updateParticles(dt) {
+    for (let i = sparks.length - 1; i >= 0; i--) {
+        let s = sparks[i];
+        s.x += s.vx * dt; s.y += s.vy * dt;
+        s.vy += 110 * dt; s.life -= dt;
+        if (s.life <= 0) sparks.splice(i, 1);
+    }
+    for (let i = smoke.length - 1; i >= 0; i--) {
+        let sm = smoke[i];
+        sm.x += sm.vx * dt; sm.y += sm.vy * dt;
+        sm.size += 12 * dt; sm.alpha -= 0.18 * dt;
+        if (sm.alpha <= 0) smoke.splice(i, 1);
+    }
+    for (let i = shockwaves.length - 1; i >= 0; i--) {
+        let sw = shockwaves[i];
+        sw.r += 320 * dt; sw.alpha -= 1.2 * dt;
+        if (sw.alpha <= 0) shockwaves.splice(i, 1);
+    }
+}
+
+function updateHUD() {
+    hudAttempt.textContent = `${currentAttempt} / ${maxAttempts}`;
+    hudTimer.textContent = `${Math.max(0, timeLeft).toFixed(1)}s`;
+    hudUnder.textContent = underCount;
+    hudPeak.textContent = roundPeak;
+    rhythmFill.style.width = `${player.rhythm}%`;
+}
+
+function showRoundResults() {
+    const lastScore = attemptScores[attemptScores.length - 1];
+    if (currentAttempt < maxAttempts) {
+        gameState = 'ROUND_END';
+        document.getElementById('round-title').textContent = `FI DE L'INTENT ${currentAttempt}!`;
+        document.getElementById('round-scores').innerHTML = `
+            Gent sota les espurnes abans del tro: <strong style="color:#00ff88">${lastScore.finalUnder}</strong><br>
+            Pic màxim en aquests 20s: <strong style="color:#ffdd00">${lastScore.peakUnder} persones</strong>
+        `;
+        screenRound.classList.remove('hidden');
+    } else {
+        gameState = 'GAME_OVER';
+        let totalPeak = 0;
+        let summaryHTML = '';
+        attemptScores.forEach((sc, idx) => {
+            totalPeak += sc.peakUnder;
+            summaryHTML += `Intent ${idx + 1}: <strong>${sc.peakUnder}</strong> màx. (Abans del tro: ${sc.finalUnder})<br>`;
+        });
+        summaryHTML += `<hr style="border-color:#ffaa00; margin:10px 0;">PUNTUACIÓ TOTAL ACUMULADA: <strong style="color:#00ff88; font-size:14px;">${totalPeak}</strong>`;
+        document.getElementById('final-scores').innerHTML = summaryHTML;
+        screenGameOver.classList.remove('hidden');
+    }
+}
+
+function drawCoveredPerson(p) {
+    const bob = Math.abs(Math.sin(p.bobPhase)) * (p.isUnderSparks ? 5 : 1.5);
+    const x = p.x, y = p.y - bob;
+    ctx.save();
+
+    if (p.isUnderSparks) {
+        ctx.fillStyle = 'rgba(255, 190, 0, 0.35)';
+        ctx.beginPath(); ctx.ellipse(x, p.y + 12, 14, 6, 0, 0, Math.PI * 2); ctx.fill();
+    }
+
+    ctx.fillStyle = 'rgba(0,0,0,0.45)';
+    ctx.beginPath(); ctx.ellipse(x, p.y + 12, 10, 4, 0, 0, Math.PI * 2); ctx.fill();
+
+    ctx.fillStyle = '#1d2b3a';
+    ctx.fillRect(x - 6, y + 2, 5, 10);
+    ctx.fillRect(x + 1, y + 2, 5, 10);
+
+    ctx.fillStyle = p.hoodieColor;
+    ctx.fillRect(x - 8, y - 10, 16, 13);
+
+    if (p.isUnderSparks || gameState === 'EXPLODING') {
+        ctx.fillRect(x - 12, y - 16, 4, 10);
+        ctx.fillRect(x + 8, y - 16, 4, 10);
+    } else {
+        ctx.fillRect(x - 11, y - 9, 3, 10);
+        ctx.fillRect(x + 8, y - 9, 3, 10);
+    }
+
+    ctx.fillStyle = p.hoodieColor;
+    ctx.beginPath(); ctx.arc(x, y - 15, 8, 0, Math.PI * 2); ctx.fill();
+
+    ctx.fillStyle = '#f2d2b6';
+    ctx.fillRect(x - 5, y - 17, 10, 4);
+    ctx.fillStyle = '#111';
+    ctx.fillRect(x - 3, y - 16, 2, 2);
+    ctx.fillRect(x + 1, y - 16, 2, 2);
+
+    ctx.fillStyle = p.bandannaColor;
+    ctx.beginPath();
+    ctx.moveTo(x - 6, y - 13); ctx.lineTo(x + 6, y - 13); ctx.lineTo(x, y - 6);
+    ctx.closePath(); ctx.fill();
+
+    if (p.hasStrawHat) {
+        ctx.fillStyle = '#e0c068';
+        ctx.fillRect(x - 11, y - 22, 22, 3);
+        ctx.fillRect(x - 6, y - 26, 12, 4);
+        ctx.fillStyle = p.bandannaColor;
+        ctx.fillRect(x - 6, y - 23, 12, 1);
+    }
+    ctx.restore();
+}
+
+function drawDiable(x, y, jumpOffset, maceAngle, isLit, isBruixaMode = false, bruixaDir = 1) {
+    const dy = y - jumpOffset;
+    ctx.save();
+
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+    ctx.beginPath(); ctx.ellipse(x, y + 14, 13, 5, 0, 0, Math.PI * 2); ctx.fill();
+
+    if (isBruixaMode) {
+        const frontX = x + bruixaDir * 16;
+        const frontY = dy - 1;
+        const rearX = x - bruixaDir * 22;
+        const rearY = dy + 6;
+
+        ctx.strokeStyle = '#999';
+        ctx.lineWidth = 3.5;
+        ctx.beginPath(); ctx.moveTo(frontX, frontY); ctx.lineTo(rearX, rearY); ctx.stroke();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath(); ctx.arc(rearX, rearY, 5.5, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = 'rgba(255, 120, 255, 0.6)';
+        ctx.beginPath(); ctx.arc(rearX, rearY, 13, 0, Math.PI * 2); ctx.fill();
+    }
+
+    ctx.fillStyle = '#111115';
+    if (isBruixaMode) {
+        ctx.fillRect(x - 10, dy + 1, 6, 9);
+        ctx.fillRect(x + 4, dy + 1, 6, 9);
+        ctx.fillStyle = '#ffcc00';
+        ctx.fillRect(x - 9, dy + 6, 4, 3);
+        ctx.fillRect(x + 5, dy + 6, 4, 3);
+    } else {
+        ctx.fillRect(x - 7, dy + 2, 6, 11);
+        ctx.fillRect(x + 1, dy + 2, 6, 11);
+        ctx.fillStyle = '#ffcc00';
+        ctx.fillRect(x - 6, dy + 8, 4, 3);
+        ctx.fillRect(x + 2, dy + 8, 4, 3);
+    }
+
+    ctx.fillStyle = '#111115';
+    ctx.fillRect(x - 10, dy - 13, 20, 16);
+
+    ctx.fillStyle = '#ffcc00';
+    ctx.beginPath();
+    ctx.moveTo(x - 8, dy - 12); ctx.lineTo(x, dy - 3); ctx.lineTo(x + 8, dy - 12);
+    ctx.closePath(); ctx.fill();
+    ctx.fillRect(x - 10, dy + 1, 20, 2);
+
+    ctx.fillStyle = '#111115';
+    ctx.beginPath(); ctx.arc(x, dy - 19, 9, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#ffcc00'; ctx.lineWidth = 1.5; ctx.stroke();
+
+    ctx.fillStyle = '#ffdd00';
+    ctx.fillRect(x - 4, dy - 20, 3, 2);
+    ctx.fillRect(x + 1, dy - 20, 3, 2);
+
+    ctx.fillStyle = '#ffcc00';
+    ctx.beginPath(); ctx.moveTo(x - 7, dy - 24); ctx.lineTo(x - 13, dy - 33); ctx.lineTo(x - 3, dy - 27); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(x + 7, dy - 24); ctx.lineTo(x + 13, dy - 33); ctx.lineTo(x + 3, dy - 27); ctx.fill();
+
+    if (!isBruixaMode) {
+        const handX = x, handY = dy - 18;
+        const tipX = handX + Math.cos(maceAngle) * 24;
+        const tipY = handY + Math.sin(maceAngle) * 24;
+
+        ctx.strokeStyle = '#888'; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(handX, handY); ctx.lineTo(tipX, tipY); ctx.stroke();
+
+        ctx.fillStyle = isLit ? '#ffffff' : '#cc3300';
+        ctx.beginPath(); ctx.arc(tipX, tipY, isLit ? 5 : 3.5, 0, Math.PI * 2); ctx.fill();
+
+        if (isLit) {
+            ctx.fillStyle = 'rgba(255, 200, 0, 0.55)';
+            ctx.beginPath(); ctx.arc(tipX, tipY, 12, 0, Math.PI * 2); ctx.fill();
+        }
+    }
+    ctx.restore();
+}
+
+function draw() {
+    ctx.save();
+    if (screenShake > 0) {
+        ctx.translate((Math.random() - 0.5) * screenShake * 2, (Math.random() - 0.5) * screenShake * 2);
+    }
+
+    ctx.fillStyle = '#18161c';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    cobbles.forEach(c => {
+        ctx.fillStyle = c.shade;
+        ctx.fillRect(c.x, c.y, c.w, c.h);
+    });
+
+    if (gameState === 'PLAYING' || (gameState === 'IGNITING' && igniteProgress > 1.2)) {
+        const activeRadius = 52 + (player.rhythm / 100) * 80 + trickRadiusBonus;
+        const grad = ctx.createRadialGradient(player.x, player.y, 8, player.x, player.y, activeRadius * 1.3);
+        grad.addColorStop(0, 'rgba(255, 160, 0, 0.38)');
+        grad.addColorStop(0.65, 'rgba(255, 70, 0, 0.14)');
+        grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+        ctx.fillStyle = grad;
+        ctx.beginPath(); ctx.arc(player.x, player.y, activeRadius * 1.3, 0, Math.PI * 2); ctx.fill();
+
+        ctx.strokeStyle = trickRadiusBonus > 5 ? 'rgba(0, 255, 180, 0.45)' : 'rgba(255, 200, 0, 0.28)';
+        ctx.lineWidth = 2; ctx.setLineDash([6, 6]);
+        ctx.beginPath(); ctx.arc(player.x, player.y, activeRadius, 0, Math.PI * 2); ctx.stroke();
+        ctx.setLineDash([]);
+    }
+
+    shockwaves.forEach(sw => {
+        ctx.strokeStyle = sw.color;
+        ctx.globalAlpha = Math.max(0, sw.alpha);
+        ctx.lineWidth = sw.lineWidth || 4;
+        ctx.beginPath(); ctx.arc(sw.x, sw.y, sw.r, 0, Math.PI * 2); ctx.stroke();
+        ctx.globalAlpha = 1;
+    });
+
+    const renderList = [];
+    crowd.forEach(p => renderList.push({ y: p.y, drawFn: () => drawCoveredPerson(p) }));
+    renderList.push({
+        y: player.y,
+        drawFn: () => drawDiable(player.x, player.y, player.jumpOffset, player.maceAngle, gameState === 'PLAYING' || (gameState === 'IGNITING' && igniteProgress > 1.8), player.bruixaTimer > 0, player.bruixaDir)
+    });
+    if (gameState === 'IGNITING' && igniter.x > -55) {
+        renderList.push({ y: igniter.y, drawFn: () => drawDiable(igniter.x, igniter.y, 0, igniter.maceAngle, true, false, 1) });
+    }
+
+    renderList.sort((a, b) => a.y - b.y);
+    renderList.forEach(item => item.drawFn());
+
+    smoke.forEach(sm => {
+        ctx.fillStyle = `rgba(160, 155, 165, ${sm.alpha})`;
+        ctx.beginPath(); ctx.arc(sm.x, sm.y, sm.size, 0, Math.PI * 2); ctx.fill();
+    });
+
+    sparks.forEach(s => {
+        ctx.fillStyle = s.color;
+        ctx.fillRect(s.x, s.y, s.size, s.size);
+    });
+
+    if (trickAnnouncement.timer > 0 && gameState === 'PLAYING') {
+        ctx.save();
+        ctx.font = '12px "Press Start 2P", monospace';
+        ctx.fillStyle = trickAnnouncement.color;
+        ctx.strokeStyle = '#000'; ctx.lineWidth = 4; ctx.textAlign = 'center';
+        const floatY = player.y - 52 - (1.3 - trickAnnouncement.timer) * 25;
+        ctx.strokeText(trickAnnouncement.text, player.x, floatY);
+        ctx.fillText(trickAnnouncement.text, player.x, floatY);
+        ctx.restore();
+    }
+
+    if (gameState === 'IGNITING') {
+        const pulse = 1 + (igniteProgress % 1) * 0.25;
+        ctx.save();
+        ctx.translate(canvas.width / 2, 195);
+        ctx.scale(pulse, pulse);
+        ctx.font = '56px "Press Start 2P", monospace';
+        ctx.fillStyle = '#ffdd00'; ctx.strokeStyle = '#990000'; ctx.lineWidth = 8; ctx.textAlign = 'center';
+        ctx.strokeText(countdownText, 0, 0); ctx.fillText(countdownText, 0, 0);
+        ctx.restore();
+
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.78)';
+        ctx.fillRect(0, canvas.height - 92, canvas.width, 48);
+        ctx.fillStyle = '#ffcc00'; ctx.font = '10px "Press Start 2P", monospace'; ctx.textAlign = 'center';
+        ctx.fillText(statusText, canvas.width / 2, canvas.height - 63);
+    } else if (goBannerTimer > 0 && gameState === 'PLAYING') {
+        ctx.save();
+        ctx.font = '44px "Press Start 2P", monospace';
+        ctx.fillStyle = '#00ff88'; ctx.strokeStyle = '#004422'; ctx.lineWidth = 8; ctx.textAlign = 'center';
+        ctx.strokeText('FOC!', canvas.width / 2, 195); ctx.fillText('FOC!', canvas.width / 2, 195);
+        ctx.restore();
+    } else if (gameState === 'EXPLODING') {
+        ctx.save();
+        ctx.font = '34px "Press Start 2P", monospace';
+        ctx.fillStyle = '#ffdd00'; ctx.strokeStyle = '#990000'; ctx.lineWidth = 8; ctx.textAlign = 'center';
+        ctx.strokeText('💥 PUM! EL TRO! 💥', canvas.width / 2, 200); ctx.fillText('💥 PUM! EL TRO! 💥', canvas.width / 2, 200);
+        ctx.restore();
+    } else if (gameState === 'PLAYING' && player.rhythm < 35) {
+        ctx.fillStyle = '#ff5533'; ctx.font = '9px "Press Start 2P", monospace'; ctx.textAlign = 'center';
+        ctx.fillText('MOU-TE I FES TRUCS! LA GENT TE POR D\'ACOSTAR-SE!', canvas.width / 2, canvas.height - 54);
+    }
+
+    if (flashAlpha > 0) {
+        ctx.fillStyle = `rgba(255, 245, 200, ${flashAlpha})`;
+        ctx.fillRect(-30, -30, canvas.width + 60, canvas.height + 60);
+    }
+    ctx.restore();
+}
+
+function gameLoop(timestamp) {
+    if (!lastFrameTime) lastFrameTime = timestamp;
+    const dt = Math.min(0.1, (timestamp - lastFrameTime) / 1000);
+    lastFrameTime = timestamp;
+
+    update(dt);
+    draw();
+    requestAnimationFrame(gameLoop);
+}
+
+initCrowd();
+requestAnimationFrame(gameLoop);
+</script>
+</body>
+</html>
