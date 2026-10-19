@@ -441,7 +441,7 @@
         <h1>CORREFOC<br><span style="font-size:14px; color:#ff6600;">EL BALL DEL DIABLE</span></h1>
         <p>Ets un diable al mig de la plaça. Tens <strong>1 sol intent de 20 segons</strong> abans del tro final per posar el màxim de gent a ballar sota el teu foc!</p>
         <div class="controls-box">
-            🥁 <strong>ELS TABALERS:</strong> A la cantonada toquen el tambor marcant el ritme.<br>
+            🥁 <strong>ELS TABALERS:</strong> A la cantonada esquerra toquen el tambor marcant el ritme.<br>
             🌐 <strong>TOP-10 GLOBAL:</strong> Les puntuacions es guarden al núvol!
         </div>
         <button type="button" class="main-btn" onclick="this.blur(); iniciarJoc();">ENCENDRE LA METXA!</button>
@@ -559,12 +559,12 @@ const player = {
 
 const igniter = { x: -60, y: 330, maceAngle: 0 };
 
-// 4 Tabalers a la cantonada inferior esquerra
+// 4 Tabalers a la cantonada inferior esquerra (ben visibles)
 const tabalers = [
-    { x: 55, y: 520, drumPhase: 0 },
-    { x: 90, y: 535, drumPhase: Math.PI * 0.5 },
-    { x: 50, y: 560, drumPhase: Math.PI },
-    { x: 95, y: 575, drumPhase: Math.PI * 1.5 }
+    { x: 75, y: 480, drumPhase: 0 },
+    { x: 125, y: 500, drumPhase: Math.PI * 0.5 },
+    { x: 70, y: 535, drumPhase: Math.PI },
+    { x: 130, y: 555, drumPhase: Math.PI * 1.5 }
 ];
 
 let crowd = [];
@@ -1314,43 +1314,58 @@ function drawTabaler(t) {
     const y = t.y - bob;
 
     ctx.save();
+    // Sombra
     ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-    ctx.beginPath(); ctx.ellipse(x, t.y + 8, 10, 4, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(x, t.y + 6, 11, 4, 0, 0, Math.PI * 2); ctx.fill();
 
+    // Pantalons negres i grocs
     ctx.fillStyle = '#111115';
-    ctx.fillRect(x - 5, y + 2, 4, 8);
-    ctx.fillRect(x + 1, y + 2, 4, 8);
+    ctx.fillRect(x - 5, y + 2, 4, 9);
+    ctx.fillRect(x + 1, y + 2, 4, 9);
     ctx.fillStyle = '#ffcc00';
     ctx.fillRect(x - 4, y + 6, 2, 3);
     ctx.fillRect(x + 2, y + 6, 2, 3);
 
+    // Casaca de diable
     ctx.fillStyle = '#111115';
-    ctx.fillRect(x - 7, y - 8, 14, 11);
+    ctx.fillRect(x - 8, y - 9, 16, 12);
     ctx.fillStyle = '#ffcc00';
-    ctx.fillRect(x - 7, y - 2, 14, 2);
+    ctx.fillRect(x - 8, y - 3, 16, 2);
 
+    // Caputxa i banyes
     ctx.fillStyle = '#111115';
-    ctx.beginPath(); ctx.arc(x, y - 12, 6.5, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = '#ffcc00'; ctx.lineWidth = 1; ctx.stroke();
+    ctx.beginPath(); ctx.arc(x, y - 14, 7.5, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#ffcc00'; ctx.lineWidth = 1.2; ctx.stroke();
 
     ctx.fillStyle = '#ffcc00';
-    ctx.beginPath(); ctx.moveTo(x - 5, y - 16); ctx.lineTo(x - 9, y - 22); ctx.lineTo(x - 2, y - 18); ctx.fill();
-    ctx.beginPath(); ctx.moveTo(x + 5, y - 16); ctx.lineTo(x + 9, y - 22); ctx.lineTo(x + 2, y - 18); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(x - 6, y - 18); ctx.lineTo(x - 11, y - 25); ctx.lineTo(x - 3, y - 20); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(x + 6, y - 18); ctx.lineTo(x + 11, y - 25); ctx.lineTo(x + 3, y - 20); ctx.fill();
 
+    // Ulls
+    ctx.fillStyle = '#ffdd00';
+    ctx.fillRect(x - 3, y - 15, 2, 2);
+    ctx.fillRect(x + 1, y - 15, 2, 2);
+
+    // Tambor gran davant del cos
     ctx.fillStyle = '#e6c280';
-    ctx.fillRect(x - 9, y - 3, 18, 9);
+    ctx.fillRect(x - 11, y - 4, 22, 11);
     ctx.fillStyle = '#ffffff';
-    ctx.fillRect(x - 9, y - 3, 18, 2);
-    ctx.fillRect(x - 9, y + 3, 18, 2);
+    ctx.fillRect(x - 11, y - 4, 22, 2.5); // pegat superior
+    ctx.fillRect(x - 11, y + 4.5, 22, 2.5); // pegat inferior
 
+    // Vora vermella del tambor
+    ctx.fillStyle = '#aa0000';
+    ctx.fillRect(x - 11, y - 1, 22, 1.5);
+
+    // Baquetes animades colpejant el tambor
     ctx.strokeStyle = '#d4a373';
-    ctx.lineWidth = 2;
-    const hitOffset = Math.sin(t.drumPhase * 2) * 3;
+    ctx.lineWidth = 2.5;
+    const hitOffset = Math.sin(t.drumPhase * 2) * 4;
     ctx.beginPath();
-    ctx.moveTo(x - 12, y - 10 - hitOffset);
-    ctx.lineTo(x - 4, y - 2);
-    ctx.moveTo(x + 12, y - 10 + hitOffset);
-    ctx.lineTo(x + 4, y - 2);
+    ctx.moveTo(x - 14, y - 12 - hitOffset);
+    ctx.lineTo(x - 5, y - 3);
+    ctx.moveTo(x + 14, y - 12 + hitOffset);
+    ctx.lineTo(x + 5, y - 3);
     ctx.stroke();
 
     ctx.restore();
@@ -1474,6 +1489,8 @@ function draw() {
 
     const renderList = [];
     crowd.forEach(p => renderList.push({ y: p.y, drawFn: () => drawCoveredPerson(p) }));
+    
+    // Dibuixar els 4 tabalers a la cantonada esquerra
     tabalers.forEach(t => renderList.push({ y: t.y, drawFn: () => drawTabaler(t) }));
 
     renderList.push({
