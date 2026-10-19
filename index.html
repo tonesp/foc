@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Capçaleres Anti-Cache per evitar versions antigues -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>FOC: El Ball del Diable</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
@@ -104,16 +108,15 @@
             transition: width 0.08s linear;
         }
 
-        /* Barra Inferior de Trucs (Pujada) */
+        /* Barra Inferior de Trucs */
         #tricks-bar {
             position: absolute;
-            bottom: 120px;
+            bottom: 0;
             left: 0;
             width: 100%;
             height: 38px;
             background: rgba(10, 10, 14, 0.95);
             border-top: 2px solid #ffaa00;
-            border-bottom: 2px solid #ffaa00;
             display: flex;
             justify-content: space-around;
             align-items: center;
@@ -161,74 +164,14 @@
             font-size: 5px;
         }
 
-        /* Joystick Virtual i Botó per a Mòbil (Pujats) */
-        #mobile-controls {
-            position: absolute;
-            bottom: 10px;
-            left: 0;
-            width: 100%;
-            height: 105px;
-            display: none;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-            z-index: 15;
-            pointer-events: none;
-        }
-
-        #virtual-joystick-base {
-            position: relative;
-            width: 90px;
-            height: 90px;
-            background: rgba(255, 170, 0, 0.15);
-            border: 2px solid rgba(255, 170, 0, 0.4);
-            border-radius: 50%;
-            pointer-events: auto;
-            touch-action: none;
-        }
-
-        #virtual-joystick-stick {
-            position: absolute;
-            top: 22px;
-            left: 22px;
-            width: 46px;
-            height: 46px;
-            background: rgba(255, 170, 0, 0.6);
-            border: 2px solid #ffaa00;
-            border-radius: 50%;
-            pointer-events: none;
-            transition: transform 0.05s linear;
-        }
-
-        #btn-action-space {
-            pointer-events: auto;
-            width: 75px;
-            height: 75px;
-            background: radial-gradient(circle, #ff5500 0%, #aa0000 100%);
-            border: 3px solid #ffcc00;
-            border-radius: 50%;
-            color: #fff;
-            font-family: 'Press Start 2P', monospace;
-            font-size: 8.5px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(255, 80, 0, 0.6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        #btn-action-space:active {
-            transform: scale(0.92);
-        }
-
         canvas {
             display: block;
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            object-fit: cover;
         }
 
-        /* Pantalles superposades (Menús) - Pujades i adaptades */
+        /* Pantalles superposades (Menús) */
         .overlay {
             position: absolute;
             top: 0;
@@ -238,10 +181,10 @@
             background: rgba(12, 10, 16, 0.98);
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
+            justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 40px 15px 20px 15px;
+            padding: 20px;
             z-index: 50;
             overflow-y: auto;
         }
@@ -252,29 +195,28 @@
 
         h1 {
             color: #ffcc00;
-            font-size: 18px;
+            font-size: 20px;
             text-shadow: 2px 2px 0 #b32400;
-            margin-top: 5px;
             margin-bottom: 8px;
             line-height: 1.2;
         }
 
         p {
-            font-size: 7.5px;
+            font-size: 8px;
             line-height: 1.5;
             color: #ddd;
-            max-width: 550px;
-            margin-bottom: 8px;
+            max-width: 600px;
+            margin-bottom: 10px;
         }
 
         .controls-box {
             background: rgba(255, 170, 0, 0.1);
             border: 2px dashed #ffaa00;
-            padding: 6px 10px;
+            padding: 8px 12px;
             border-radius: 6px;
-            margin-bottom: 10px;
-            font-size: 7px;
-            line-height: 1.5;
+            margin-bottom: 12px;
+            font-size: 7.5px;
+            line-height: 1.6;
             color: #ffdd88;
             text-align: left;
         }
@@ -290,7 +232,6 @@
             cursor: pointer;
             box-shadow: 0 4px 0 #994400;
             pointer-events: auto;
-            margin-top: 5px;
         }
 
         button.main-btn:active {
@@ -301,10 +242,10 @@
         /* Estil Arcade 80s per al Selector de Lletres i TOP 10 */
         .arcade-input-container {
             display: flex;
-            gap: 12px;
+            gap: 15px;
             justify-content: center;
             align-items: center;
-            margin: 8px 0;
+            margin: 10px 0;
         }
 
         .letter-box {
@@ -313,12 +254,12 @@
             align-items: center;
             background: #000;
             border: 2px solid #ffcc00;
-            padding: 4px 8px;
+            padding: 5px 8px;
             border-radius: 4px;
         }
 
         .letter-display {
-            font-size: 22px;
+            font-size: 24px;
             color: #00ff88;
             margin: 3px 0;
             text-shadow: 0 0 8px rgba(0,255,136,0.6);
@@ -336,11 +277,11 @@
 
         .top10-table {
             width: 100%;
-            max-width: 340px;
-            font-size: 7.5px;
+            max-width: 350px;
+            font-size: 8px;
             border-collapse: collapse;
-            margin-top: 2px;
-            margin-bottom: 8px;
+            margin-top: 4px;
+            margin-bottom: 10px;
         }
 
         .top10-table th {
@@ -359,12 +300,7 @@
             font-weight: bold;
         }
 
-        /* Adaptació total a pantalla vertical en mòbil */
-        @media (max-aspect-ratio: 4/3), (max-width: 700px) {
-            body {
-                justify-content: flex-start;
-                background-color: #1a181d;
-            }
+        @media (max-width: 900px) {
             #game-wrapper {
                 width: 100vw;
                 height: 100vh;
@@ -372,11 +308,6 @@
                 max-height: none;
                 border: none;
                 border-radius: 0;
-            }
-            canvas {
-                width: 100%;
-                height: calc(100vh - 165px);
-                object-fit: cover;
             }
         }
     </style>
@@ -410,19 +341,11 @@
         </div>
     </div>
 
-    <!-- Joystick Virtual i Botó per a Mòbil -->
-    <div id="mobile-controls">
-        <div id="virtual-joystick-base">
-            <div id="virtual-joystick-stick"></div>
-        </div>
-        <div id="btn-action-space">BALLAR</div>
-    </div>
-
     <!-- Barra Inferior de Trucs -->
     <div id="tricks-bar">
         <div class="trick-slot" id="slot-bruixa" onclick="activarTrucTactic('bruixa')">
             <div>🧹 <strong>BRUIXA</strong></div>
-            <div id="keys-bruixa"><span class="key-badge">◀◀</span>/<span class="key-badge">▶▶</span></div>
+            <div id="keys-bruixa"><span class="key-badge">2 TAPS</span></div>
         </div>
         <div class="trick-slot" id="slot-roda" onclick="activarTrucTactic('roda')">
             <div>🌪️ <strong>RODA</strong></div>
@@ -433,8 +356,8 @@
             <div id="keys-salt"><span class="key-badge">▲▼</span> <span class="key-badge">ESP</span></div>
         </div>
         <div class="trick-slot" id="slot-carretillada" onclick="activarTrucTactic('carretillada')">
-            <div>🔥 <strong>SÚPER</strong></div>
-            <div id="keys-carretillada"><span class="key-badge">◀▲▶</span> <span class="key-badge">ESP</span></div>
+            <div>🐉 <strong>DRAC</strong></div>
+            <div id="keys-carretillada"><span class="key-badge">3 TAPS</span></div>
         </div>
     </div>
 
@@ -442,11 +365,12 @@
 
     <!-- Pantalla d'Inici -->
     <div id="screen-start" class="overlay">
-        <h1>FOC<br><span style="font-size:11px; color:#ff6600;">EL BALL DEL DIABLE</span></h1>
+        <h1>FOC<br><span style="font-size:12px; color:#ff6600;">EL BALL DEL DIABLE</span></h1>
         <p>Ets un diable al mig de la plaça. Tens <strong>1 sol intent de 20 segons</strong> abans del tro final.</p>
         <div class="controls-box">
             🎯 <strong>OBJECTIU:</strong> Atreure a la gent perquè s'ho passi bé a prop teu.<br>
-            📱 <strong>Mòbil:</strong> Mou el joystick virtual tàctil per moure't per la plaça.
+            📱 <strong>Mòbil:</strong> Toca i arrossega directament sobre el diable per moure't.<br>
+            ✨ <strong>TRUCS:</strong> Fes <strong>2 taps</strong> ràpidament per "La Bruixa", o <strong>3 taps</strong> per transformar-te en Drac Verd durant 3 segons!
         </div>
         <button type="button" class="main-btn" onclick="this.blur(); iniciarJoc();">ENCENDRE LA METXA!</button>
     </div>
@@ -473,7 +397,7 @@
                 <button class="letter-btn" onclick="canviarLletra(2, -1)">▼</button>
             </div>
         </div>
-        <p style="font-size:6.5px; color:#aaa; margin-bottom:8px;">(Fes servir UP/DOWN per canviar lletra, LEFT/RIGHT per moure't, ESPAI/ENTER per desar)</p>
+        <p style="font-size:7px; color:#aaa; margin-bottom:10px;">(Fes servir UP/DOWN per canviar lletra, LEFT/RIGHT per moure't, ESPAI/ENTER per desar)</p>
         <button type="button" class="main-btn" onclick="this.blur(); guardarPuntuacioGlobal();">DESAR AL TOP-10 GLOBAL</button>
     </div>
 
@@ -481,7 +405,7 @@
     <div id="screen-top10" class="overlay hidden">
         <h1>🌟 RÈCORDS MUNDIALS TOP-10 🌟</h1>
         <table class="top10-table" id="top10-table-content">
-            <tr><td colspan="3" style="text-align:center; padding:8px;">Carregant rànquing global...</td></tr>
+            <tr><td colspan="3" style="text-align:center; padding:10px;">Carregant rànquing global...</td></tr>
         </table>
         <button type="button" class="main-btn" onclick="this.blur(); reiniciarComplet();">TORNAR A JUGAR</button>
     </div>
@@ -493,6 +417,20 @@
 // ==========================================================
 const SHEETDB_API_URL = 'https://sheetdb.io/api/v1/c3a6hbl4dyxx2';
 
+// ----------------------------------------------------------
+// SISTEMA ANTI-CACHE PER A GITHUB PAGES / MÒBILS
+// ----------------------------------------------------------
+(function checkNewVersion() {
+    const gameVersion = '2026.10.20-v2'; // Modifica aquest text quan facis canvis importants
+    const savedVersion = localStorage.getItem('foc_game_version');
+    if (savedVersion !== gameVersion) {
+        localStorage.setItem('foc_game_version', gameVersion);
+        if (savedVersion) {
+            // Força la recàrrega neta de cau del navegador si detecta nova versió
+            window.location.reload(true);
+        }
+    }
+})();
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -506,12 +444,6 @@ const rhythmFill = document.getElementById('rhythm-bar-fill');
 const screenStart = document.getElementById('screen-start');
 const screenHighscore = document.getElementById('screen-highscore');
 const screenTop10 = document.getElementById('screen-top10');
-const mobileControls = document.getElementById('mobile-controls');
-
-let isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-if (isTouchDevice) {
-    mobileControls.style.display = 'flex';
-}
 
 const ROUND_DURATION = 20;
 const TRICK_COOLDOWN = 5.0;
@@ -543,10 +475,10 @@ let shockwaves = [];
 
 const trickCooldowns = { bruixa: 0, roda: 0, salt: 0, carretillada: 0 };
 const trickDefaultLabels = {
-    bruixa: '<span class="key-badge">◀◀</span>/<span class="key-badge">▶▶</span>',
+    bruixa: '<span class="key-badge">2 TAPS</span>',
     roda: '<span class="key-badge">◀▶</span> <span class="key-badge">ESP</span>',
     salt: '<span class="key-badge">▲▼</span> <span class="key-badge">ESP</span>',
-    carretillada: '<span class="key-badge">◀▲▶</span> <span class="key-badge">ESP</span>'
+    carretillada: '<span class="key-badge">3 TAPS</span>'
 };
 
 const keys = {
@@ -555,15 +487,17 @@ const keys = {
     W: false, S: false, A: false, D: false
 };
 
-// Variables per al Joystick Virtual
-let joystickMove = { x: 0, y: 0 };
-let joystickActive = false;
-let joystickTouchId = null;
+// Control tàctil directe sobre el personatge
+let directTouchActive = false;
+let targetPos = { x: 425, y: 330 };
+let tapCount = 0;
+let tapTimer = null;
 
 const player = {
-    x: 425, y: 330, speed: 230, rhythm: 0, maceAngle: 0,
+    x: 425, y: 330, speed: 250, rhythm: 0, maceAngle: 0,
     spinBoost: 0, jumpOffset: 0, jumpPhase: 0, facing: 1,
-    bruixaTimer: 0, bruixaDir: 1
+    bruixaTimer: 0, bruixaDir: 1,
+    dragonTimer: 0
 };
 
 const igniter = { x: -60, y: 330, maceAngle: 0 };
@@ -620,7 +554,7 @@ function actualitzarVisualLletres() {
 
 async function carregarTop10Global() {
     try {
-        let response = await fetch(SHEETDB_API_URL);
+        let response = await fetch(SHEETDB_API_URL + '?cacheBust=' + new Date().getTime());
         let data = await response.json();
         data.sort((a, b) => parseInt(b.score) - parseInt(a.score));
         return data.slice(0, 10);
@@ -635,7 +569,7 @@ async function guardarPuntuacioGlobal() {
     lastSavedInitials = initials;
     
     screenHighscore.classList.add('hidden');
-    document.getElementById('top10-table-content').innerHTML = `<tr><td colspan="3" style="text-align:center; padding:8px;">Desant al núvol...</td></tr>`;
+    document.getElementById('top10-table-content').innerHTML = `<tr><td colspan="3" style="text-align:center; padding:10px;">Desant al núvol...</td></tr>`;
     screenTop10.classList.remove('hidden');
 
     try {
@@ -656,7 +590,7 @@ async function mostrarPantallaTop10() {
     let html = `<tr><th>POS</th><th>INIC</th><th>PUNTS</th></tr>`;
     
     if (scores.length === 0) {
-        html += `<tr><td colspan="3" style="text-align:center; padding:8px;">No s'ha pogut carregar el rànquing.</td></tr>`;
+        html += `<tr><td colspan="3" style="text-align:center; padding:10px;">No s'ha pogut carregar el rànquing.</td></tr>`;
     } else {
         scores.forEach((sc, idx) => {
             const isCurrent = (sc.name === lastSavedInitials && parseInt(sc.score) === totalGameScore);
@@ -688,90 +622,78 @@ window.activarTrucTactic = function(trickKey) {
         trickCooldowns.salt = TRICK_COOLDOWN;
         executeTrick('SALT DEL DIABLE!', 26, 40, 35, '#ffdd00');
     } else if (trickKey === 'carretillada') {
-        trickCooldowns.carretillada = TRICK_COOLDOWN;
-        executeTrick('SÚPER CARRETILLADA!', 42, 65, 55, '#00ffff');
+        executeDragonTrick();
     }
 };
 
-// Configuració del Joystick Virtual tàctil
-function setupJoystick() {
-    const base = document.getElementById('virtual-joystick-base');
-    const stick = document.getElementById('virtual-joystick-stick');
-    const maxDist = 32;
-
-    base.addEventListener('touchstart', (e) => {
+// Gestió de control tàctil directe al canvas
+function setupDirectTouch() {
+    canvas.addEventListener('touchstart', (e) => {
         e.preventDefault();
-        const touch = e.changedTouches[0];
-        joystickTouchId = touch.identifier;
-        joystickActive = true;
-        updateJoystickPosition(touch);
+        if (gameState !== 'PLAYING') return;
+
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const clickX = (touch.clientX - rect.left) * scaleX;
+        const clickY = (touch.clientY - rect.top) * scaleY;
+
+        targetPos = { x: clickX, y: clickY };
+        directTouchActive = true;
+
+        tapCount++;
+        if (tapTimer) clearTimeout(tapTimer);
+
+        tapTimer = setTimeout(() => {
+            if (tapCount === 2) {
+                if (trickCooldowns.bruixa <= 0) {
+                    const dir = clickX < player.x ? -1 : 1;
+                    executeBruixaTrick(dir);
+                } else {
+                    showCooldownWarning('LA BRUIXA', trickCooldowns.bruixa);
+                }
+            } else if (tapCount >= 3) {
+                if (trickCooldowns.carretillada <= 0) {
+                    executeDragonTrick();
+                } else {
+                    showCooldownWarning('DRAC', trickCooldowns.carretillada);
+                }
+            }
+            tapCount = 0;
+        }, 300);
+
     }, {passive: false});
 
-    window.addEventListener('touchmove', (e) => {
-        if (!joystickActive) return;
-        for (let i = 0; i < e.changedTouches.length; i++) {
-            const touch = e.changedTouches[i];
-            if (touch.identifier === joystickTouchId) {
-                e.preventDefault();
-                updateJoystickPosition(touch);
-            }
-        }
-    }, {passive: false});
-
-    window.addEventListener('touchend', (e) => {
-        if (!joystickActive) return;
-        for (let i = 0; i < e.changedTouches.length; i++) {
-            const touch = e.changedTouches[i];
-            if (touch.identifier === joystickTouchId) {
-                joystickActive = false;
-                joystickMove = { x: 0, y: 0 };
-                stick.style.transform = `translate(0px, 0px)`;
-            }
-        }
-    }, {passive: false});
-
-    function updateJoystickPosition(touch) {
-        const rect = base.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        
-        let dx = touch.clientX - centerX;
-        let dy = touch.clientY - centerY;
-        const dist = Math.hypot(dx, dy);
-
-        if (dist > maxDist) {
-            dx = (dx / dist) * maxDist;
-            dy = (dy / dist) * maxDist;
-        }
-
-        stick.style.transform = `translate(${dx}px, ${dy}px)`;
-        joystickMove = { x: dx / maxDist, y: dy / maxDist };
-
-        if (Math.abs(joystickMove.x) > 0.8) {
-            const now = performance.now();
-            const dir = Math.sign(joystickMove.x);
-            if (window.lastJoystickTapDir === dir && now - window.lastJoystickTapTime < 350 && gameState === 'PLAYING' && trickCooldowns.bruixa <= 0) {
-                executeBruixaTrick(dir);
-                window.lastJoystickTapTime = 0;
-            } else {
-                window.lastJoystickTapDir = dir;
-                window.lastJoystickTapTime = now;
-            }
-        }
-    }
-
-    const spaceBtn = document.getElementById('btn-action-space');
-    spaceBtn.addEventListener('touchstart', (e) => {
+    canvas.addEventListener('touchmove', (e) => {
+        if (!directTouchActive || gameState !== 'PLAYING') return;
         e.preventDefault();
-        if (gameState === 'PLAYING') triggerDanceSpace();
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        targetPos = {
+            x: (touch.clientX - rect.left) * scaleX,
+            y: (touch.clientY - rect.top) * scaleY
+        };
+    }, {passive: false});
+
+    canvas.addEventListener('touchend', (e) => {
+        directTouchActive = false;
     });
 }
-setupJoystick();
+setupDirectTouch();
 
-function triggerDanceSpace() {
-    player.rhythm = Math.min(100, player.rhythm + 9);
-    player.spinBoost = 15;
-    burstSparks(player.x, player.y - 25, 14, true);
+function executeDragonTrick() {
+    trickCooldowns.carretillada = TRICK_COOLDOWN;
+    player.dragonTimer = 3.0;
+    player.rhythm = 100;
+    trickRadiusBonus = 120;
+    player.jumpOffset = 18;
+
+    trickAnnouncement = { text: '🐉 CAP DE DRAC VERD! 🐉', timer: 1.5, color: '#00ff55' };
+    shockwaves.push({ x: player.x, y: player.y, r: 20, alpha: 1, color: '#00ff55', lineWidth: 6 });
+    burstSparks(player.x, player.y - 28, 65, true);
 }
 
 function getComboToken(e) {
@@ -839,10 +761,9 @@ window.addEventListener('keydown', (e) => {
 
             if (seq.endsWith('LURS')) {
                 if (trickCooldowns.carretillada <= 0) {
-                    trickCooldowns.carretillada = TRICK_COOLDOWN;
-                    executeTrick('SÚPER CARRETILLADA!', 42, 65, 55, '#00ffff');
+                    executeDragonTrick();
                 } else {
-                    showCooldownWarning('CARRETILLADA', trickCooldowns.carretillada);
+                    showCooldownWarning('DRAC', trickCooldowns.carretillada);
                 }
                 inputBuffer = [];
                 return;
@@ -868,7 +789,9 @@ window.addEventListener('keydown', (e) => {
         }
 
         if (e.code === 'Space' || e.key === ' ') {
-            triggerDanceSpace();
+            player.rhythm = Math.min(100, player.rhythm + 9);
+            player.spinBoost = 15;
+            burstSparks(player.x, player.y - 25, 14, true);
         }
     }
 }, { passive: false });
@@ -892,14 +815,13 @@ function executeTrick(name, rhythmGain, radiusGain, sparkCount, color) {
     player.jumpOffset = 18;
 
     trickAnnouncement = { text: name, timer: 1.3, color: color };
-
     shockwaves.push({ x: player.x, y: player.y, r: 15, alpha: 1, color: color, lineWidth: 4 });
     burstSparks(player.x, player.y - 28, sparkCount, true);
 }
 
 function executeBruixaTrick(dir) {
     trickCooldowns.bruixa = TRICK_COOLDOWN;
-    player.bruixaTimer = 1.25;
+    player.bruixaTimer = 3.0;
     player.bruixaDir = dir;
     player.facing = dir;
 
@@ -908,7 +830,6 @@ function executeBruixaTrick(dir) {
     player.jumpOffset = 14;
 
     trickAnnouncement = { text: '🧹 LA BRUIXA! 🧹', timer: 1.3, color: '#ff77ff' };
-
     shockwaves.push({ x: player.x, y: player.y, r: 12, alpha: 1, color: '#ff77ff', lineWidth: 4 });
     burstJetSparks(player.x - dir * 18, player.y + 4, dir, 38);
 }
@@ -964,6 +885,8 @@ function startAttempt() {
     player.jumpOffset = 0;
     player.maceAngle = -Math.PI / 3;
     player.bruixaTimer = 0;
+    player.dragonTimer = 0;
+    targetPos = { x: 425, y: 330 };
 
     igniter.x = -50;
     igniter.y = 330;
@@ -1003,7 +926,7 @@ function burstSparks(originX, originY, count, isBigBurst = false, isExplosion = 
             vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
             life: isExplosion ? (0.5 + Math.random() * 0.8) : (0.25 + Math.random() * 0.45),
             size: isExplosion ? (3 + Math.random() * 4) : (2 + Math.random() * 3),
-            color: Math.random() > 0.35 ? '#ffee00' : (Math.random() > 0.5 ? '#ff5500' : '#ffffff')
+            color: player.dragonTimer > 0 ? '#00ff55' : (Math.random() > 0.35 ? '#ffee00' : (Math.random() > 0.5 ? '#ff5500' : '#ffffff'))
         });
     }
 }
@@ -1042,6 +965,7 @@ function triggerFinalExplosion() {
     gameState = 'EXPLODING';
     explodeTimer = 2.0;
     player.bruixaTimer = 0;
+    player.dragonTimer = 0;
 
     totalGameScore = roundPeak;
 
@@ -1137,7 +1061,10 @@ function update(dt) {
 
     if (goBannerTimer > 0) goBannerTimer -= dt;
     if (trickAnnouncement.timer > 0) trickAnnouncement.timer -= dt;
-    if (trickRadiusBonus > 0) trickRadiusBonus = Math.max(0, trickRadiusBonus - 24 * dt);
+    if (trickRadiusBonus > 0 && player.dragonTimer <= 0) trickRadiusBonus = Math.max(0, trickRadiusBonus - 24 * dt);
+
+    if (player.bruixaTimer > 0) player.bruixaTimer = Math.max(0, player.bruixaTimer - dt);
+    if (player.dragonTimer > 0) player.dragonTimer = Math.max(0, player.dragonTimer - dt);
 
     for (let k in trickCooldowns) {
         if (trickCooldowns[k] > 0) trickCooldowns[k] = Math.max(0, trickCooldowns[k] - dt);
@@ -1153,9 +1080,14 @@ function update(dt) {
     }
 
     let dx = 0, dy = 0;
-    if (joystickActive) {
-        dx = joystickMove.x;
-        dy = joystickMove.y;
+    if (directTouchActive) {
+        const distX = targetPos.x - player.x;
+        const distY = targetPos.y - player.y;
+        const dist = Math.hypot(distX, distY);
+        if (dist > 5) {
+            dx = distX / dist;
+            dy = distY / dist;
+        }
     } else {
         if (keys.ArrowLeft || keys.a || keys.A) dx -= 1;
         if (keys.ArrowRight || keys.d || keys.D) dx += 1;
@@ -1164,7 +1096,6 @@ function update(dt) {
     }
 
     if (player.bruixaTimer > 0) {
-        player.bruixaTimer -= dt;
         player.x += player.bruixaDir * (player.speed * 1.38) * dt;
         player.y += dy * (player.speed * 0.85) * dt;
         player.rhythm = Math.min(100, player.rhythm + 35 * dt);
@@ -1183,11 +1114,11 @@ function update(dt) {
             player.x += dx * player.speed * dt;
             player.y += dy * player.speed * dt;
             if (dx !== 0) player.facing = Math.sign(dx);
-            player.rhythm = Math.min(100, player.rhythm + 24 * dt);
+            player.rhythm = Math.min(100, player.rhythm + (player.dragonTimer > 0 ? 50 : 24) * dt);
             player.jumpPhase += dt * 16;
             player.jumpOffset = Math.abs(Math.sin(player.jumpPhase)) * 7;
         } else {
-            player.rhythm = Math.max(0, player.rhythm - 48 * dt);
+            player.rhythm = Math.max(0, player.rhythm - (player.dragonTimer > 0 ? 0 : 48) * dt);
             player.jumpOffset = Math.max(0, player.jumpOffset - 30 * dt);
         }
     }
@@ -1202,31 +1133,31 @@ function update(dt) {
         spawnSmoke(rearX, rearY);
     } else {
         player.spinBoost = Math.max(0, player.spinBoost - 25 * dt);
-        const spinSpeed = 5 + (player.rhythm / 100) * 16 + player.spinBoost;
+        const spinSpeed = (player.dragonTimer > 0 ? 14 : 5) + (player.rhythm / 100) * 16 + player.spinBoost;
         player.maceAngle += spinSpeed * dt;
 
         const maceTipX = player.x + Math.cos(player.maceAngle) * 24;
         const maceTipY = (player.y - 24 - player.jumpOffset) + Math.sin(player.maceAngle) * 24;
 
         const preExplosionBoost = timeLeft < 3.0 ? 4 : 0;
-        const sparkRate = Math.floor(1 + (player.rhythm / 100) * 6 + preExplosionBoost);
+        const sparkRate = Math.floor((player.dragonTimer > 0 ? 8 : 1) + (player.rhythm / 100) * 6 + preExplosionBoost);
         burstSparks(maceTipX, maceTipY, sparkRate, false);
         spawnSmoke(maceTipX, maceTipY);
     }
 
-    const sparkZoneRadius = 52 + (player.rhythm / 100) * 80 + trickRadiusBonus;
+    const sparkZoneRadius = (player.dragonTimer > 0 ? 95 : 52) + (player.rhythm / 100) * 80 + trickRadiusBonus;
     let currentUnder = 0;
 
     crowd.forEach(p => {
         const distToDevil = Math.hypot(player.x - p.x, player.y - p.y);
-        const attractionRange = 75 + (player.rhythm / 100) * 280 + trickRadiusBonus * 1.8;
+        const attractionRange = (player.dragonTimer > 0 ? 250 : 75) + (player.rhythm / 100) * 280 + trickRadiusBonus * 1.8;
 
-        if (player.rhythm > p.courageThreshold && distToDevil < attractionRange) {
+        if ((player.rhythm > p.courageThreshold || player.dragonTimer > 0) && distToDevil < attractionRange) {
             p.prefAngle += dt * 0.75;
             const targetX = player.x + Math.cos(p.prefAngle) * p.prefDist;
             const targetY = player.y + Math.sin(p.prefAngle) * p.prefDist;
             const angleToTarget = Math.atan2(targetY - p.y, targetX - p.x);
-            const urgency = 0.38 + ((player.rhythm - p.courageThreshold) / 65) * 0.65 + (trickRadiusBonus > 10 ? 0.45 : 0);
+            const urgency = 0.38 + ((player.rhythm - p.courageThreshold) / 65) * 0.65 + (player.dragonTimer > 0 ? 0.8 : 0);
 
             p.vx = Math.cos(angleToTarget) * p.speed * urgency;
             p.vy = Math.sin(angleToTarget) * p.speed * urgency;
@@ -1258,7 +1189,7 @@ function update(dt) {
         p.y = Math.max(95, Math.min(canvas.height - 56, p.y));
 
         const newDist = Math.hypot(player.x - p.x, player.y - p.y);
-        if (newDist <= sparkZoneRadius && player.rhythm > 20) {
+        if (newDist <= sparkZoneRadius && (player.rhythm > 20 || player.dragonTimer > 0)) {
             p.isUnderSparks = true;
             currentUnder++;
         } else {
@@ -1408,7 +1339,7 @@ function drawTabaler(t) {
     ctx.restore();
 }
 
-function drawDiable(x, y, jumpOffset, maceAngle, isLit, isBruixaMode = false, bruixaDir = 1) {
+function drawDiable(x, y, jumpOffset, maceAngle, isLit, isBruixaMode = false, bruixaDir = 1, isDragon = false) {
     const dy = y - jumpOffset;
     ctx.save();
 
@@ -1449,23 +1380,37 @@ function drawDiable(x, y, jumpOffset, maceAngle, isLit, isBruixaMode = false, br
     ctx.fillStyle = '#111115';
     ctx.fillRect(x - 10, dy - 13, 20, 16);
 
-    ctx.fillStyle = '#ffcc00';
+    ctx.fillStyle = isDragon ? '#00cc44' : '#ffcc00';
     ctx.beginPath();
     ctx.moveTo(x - 8, dy - 12); ctx.lineTo(x, dy - 3); ctx.lineTo(x + 8, dy - 12);
     ctx.closePath(); ctx.fill();
     ctx.fillRect(x - 10, dy + 1, 20, 2);
 
-    ctx.fillStyle = '#111115';
-    ctx.beginPath(); ctx.arc(x, dy - 19, 9, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = '#ffcc00'; ctx.lineWidth = 1.5; ctx.stroke();
+    if (isDragon) {
+        ctx.fillStyle = '#00ff55';
+        ctx.beginPath();
+        ctx.ellipse(x, dy - 20, 13, 9, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#ffff00';
+        ctx.fillRect(x - 4, dy - 23, 3, 3);
+        ctx.fillRect(x + 2, dy - 23, 3, 3);
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.moveTo(x, dy - 31); ctx.lineTo(x - 4, dy - 26); ctx.lineTo(x + 4, dy - 26);
+        ctx.fill();
+    } else {
+        ctx.fillStyle = '#111115';
+        ctx.beginPath(); ctx.arc(x, dy - 19, 9, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#ffcc00'; ctx.lineWidth = 1.5; ctx.stroke();
 
-    ctx.fillStyle = '#ffdd00';
-    ctx.fillRect(x - 4, dy - 20, 3, 2);
-    ctx.fillRect(x + 1, dy - 20, 3, 2);
+        ctx.fillStyle = '#ffdd00';
+        ctx.fillRect(x - 4, dy - 20, 3, 2);
+        ctx.fillRect(x + 1, dy - 20, 3, 2);
 
-    ctx.fillStyle = '#ffcc00';
-    ctx.beginPath(); ctx.moveTo(x - 7, dy - 24); ctx.lineTo(x - 13, dy - 33); ctx.lineTo(x - 3, dy - 27); ctx.fill();
-    ctx.beginPath(); ctx.moveTo(x + 7, dy - 24); ctx.lineTo(x + 13, dy - 33); ctx.lineTo(x + 3, dy - 27); ctx.fill();
+        ctx.fillStyle = '#ffcc00';
+        ctx.beginPath(); ctx.moveTo(x - 7, dy - 24); ctx.lineTo(x - 13, dy - 33); ctx.lineTo(x - 3, dy - 27); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(x + 7, dy - 24); ctx.lineTo(x + 13, dy - 33); ctx.lineTo(x + 3, dy - 27); ctx.fill();
+    }
 
     if (!isBruixaMode) {
         const handX = x, handY = dy - 18;
@@ -1479,8 +1424,8 @@ function drawDiable(x, y, jumpOffset, maceAngle, isLit, isBruixaMode = false, br
         ctx.beginPath(); ctx.arc(tipX, tipY, isLit ? 5 : 3.5, 0, Math.PI * 2); ctx.fill();
 
         if (isLit) {
-            ctx.fillStyle = 'rgba(255, 200, 0, 0.55)';
-            ctx.beginPath(); ctx.arc(tipX, tipY, 12, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = isDragon ? 'rgba(0, 255, 100, 0.7)' : 'rgba(255, 200, 0, 0.55)';
+            ctx.beginPath(); ctx.arc(tipX, tipY, isDragon ? 18 : 12, 0, Math.PI * 2); ctx.fill();
         }
     }
     ctx.restore();
@@ -1501,16 +1446,16 @@ function draw() {
     });
 
     if (gameState === 'PLAYING' || (gameState === 'IGNITING' && igniteProgress > 1.2)) {
-        const activeRadius = 52 + (player.rhythm / 100) * 80 + trickRadiusBonus;
+        const activeRadius = (player.dragonTimer > 0 ? 95 : 52) + (player.rhythm / 100) * 80 + trickRadiusBonus;
         const grad = ctx.createRadialGradient(player.x, player.y, 8, player.x, player.y, activeRadius * 1.3);
-        grad.addColorStop(0, 'rgba(255, 160, 0, 0.38)');
-        grad.addColorStop(0.65, 'rgba(255, 70, 0, 0.14)');
+        grad.addColorStop(0, player.dragonTimer > 0 ? 'rgba(0, 255, 100, 0.45)' : 'rgba(255, 160, 0, 0.38)');
+        grad.addColorStop(0.65, player.dragonTimer > 0 ? 'rgba(0, 200, 80, 0.2)' : 'rgba(255, 70, 0, 0.14)');
         grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
         ctx.fillStyle = grad;
         ctx.beginPath(); ctx.arc(player.x, player.y, activeRadius * 1.3, 0, Math.PI * 2); ctx.fill();
 
-        ctx.strokeStyle = trickRadiusBonus > 5 ? 'rgba(0, 255, 180, 0.45)' : 'rgba(255, 200, 0, 0.28)';
+        ctx.strokeStyle = player.dragonTimer > 0 ? 'rgba(0, 255, 100, 0.6)' : (trickRadiusBonus > 5 ? 'rgba(0, 255, 180, 0.45)' : 'rgba(255, 200, 0, 0.28)');
         ctx.lineWidth = 2; ctx.setLineDash([6, 6]);
         ctx.beginPath(); ctx.arc(player.x, player.y, activeRadius, 0, Math.PI * 2); ctx.stroke();
         ctx.setLineDash([]);
@@ -1530,10 +1475,10 @@ function draw() {
 
     renderList.push({
         y: player.y,
-        drawFn: () => drawDiable(player.x, player.y, player.jumpOffset, player.maceAngle, gameState === 'PLAYING' || (gameState === 'IGNITING' && igniteProgress > 1.8), player.bruixaTimer > 0, player.bruixaDir)
+        drawFn: () => drawDiable(player.x, player.y, player.jumpOffset, player.maceAngle, gameState === 'PLAYING' || (gameState === 'IGNITING' && igniteProgress > 1.8), player.bruixaTimer > 0, player.bruixaDir, player.dragonTimer > 0)
     });
     if (gameState === 'IGNITING' && igniter.x > -55) {
-        renderList.push({ y: igniter.y, drawFn: () => drawDiable(igniter.x, igniter.y, 0, igniter.maceAngle, true, false, 1) });
+        renderList.push({ y: igniter.y, drawFn: () => drawDiable(igniter.x, igniter.y, 0, igniter.maceAngle, true, false, 1, false) });
     }
 
     renderList.sort((a, b) => a.y - b.y);
