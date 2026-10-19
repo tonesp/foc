@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Correfoc: El Ball del Diable</title>
+    <title>FOC: El Ball del Diable</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
@@ -50,13 +50,13 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 65px;
+            height: 55px;
             background: linear-gradient(180deg, rgba(10,10,12,0.95) 0%, rgba(20,18,24,0.85) 100%);
             border-bottom: 3px solid #ffaa00;
             display: flex;
             justify-content: space-around;
             align-items: center;
-            padding: 0 8px;
+            padding: 0 6px;
             z-index: 10;
             pointer-events: none;
         }
@@ -69,28 +69,28 @@
         }
 
         .hud-label {
-            font-size: 7.5px;
+            font-size: 6.5px;
             color: #aaa;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
             letter-spacing: 1px;
         }
 
         .hud-value {
-            font-size: 13px;
+            font-size: 11px;
             color: #ffdd00;
             text-shadow: 2px 2px 0px #880000;
         }
 
         .hud-value.highlight {
-            font-size: 15px;
+            font-size: 13px;
             color: #00ff88;
             text-shadow: 2px 2px 0px #005522;
         }
 
         /* Barra de Ritme */
         #rhythm-bar-bg {
-            width: 85px;
-            height: 11px;
+            width: 65px;
+            height: 9px;
             background: #222;
             border: 2px solid #555;
             border-radius: 3px;
@@ -104,19 +104,20 @@
             transition: width 0.08s linear;
         }
 
-        /* Barra Inferior de Trucs */
+        /* Barra Inferior de Trucs (Pujada) */
         #tricks-bar {
             position: absolute;
-            bottom: 0;
+            bottom: 120px;
             left: 0;
             width: 100%;
-            height: 42px;
+            height: 38px;
             background: rgba(10, 10, 14, 0.95);
             border-top: 2px solid #ffaa00;
+            border-bottom: 2px solid #ffaa00;
             display: flex;
             justify-content: space-around;
             align-items: center;
-            font-size: 6.5px;
+            font-size: 6px;
             color: #ffdd88;
             z-index: 10;
             padding: 0 4px;
@@ -127,7 +128,7 @@
             flex-direction: column;
             align-items: center;
             gap: 2px;
-            padding: 3px 5px;
+            padding: 2px 4px;
             border-radius: 4px;
             background: #221c10;
             border: 1px solid #aa7700;
@@ -148,71 +149,67 @@
 
         .trick-cd-label {
             color: #ff5555;
-            font-size: 6px;
+            font-size: 5.5px;
         }
 
         .key-badge {
             background: #332a15;
             border: 1px solid #ffaa00;
-            padding: 2px 3px;
+            padding: 1px 2px;
             border-radius: 3px;
             color: #fff;
-            font-size: 6px;
+            font-size: 5px;
         }
 
-        /* Controls Tàctils per a Mòbil */
+        /* Joystick Virtual i Botó per a Mòbil (Pujats) */
         #mobile-controls {
             position: absolute;
-            bottom: 46px;
+            bottom: 10px;
             left: 0;
             width: 100%;
-            height: 110px;
+            height: 105px;
             display: none;
             justify-content: space-between;
             align-items: center;
-            padding: 0 15px;
+            padding: 0 20px;
             z-index: 15;
             pointer-events: none;
         }
 
-        .dpad {
+        #virtual-joystick-base {
             position: relative;
-            width: 105px;
-            height: 105px;
+            width: 90px;
+            height: 90px;
+            background: rgba(255, 170, 0, 0.15);
+            border: 2px solid rgba(255, 170, 0, 0.4);
+            border-radius: 50%;
             pointer-events: auto;
+            touch-action: none;
         }
 
-        .dpad-btn {
+        #virtual-joystick-stick {
             position: absolute;
-            background: rgba(255, 170, 0, 0.35);
+            top: 22px;
+            left: 22px;
+            width: 46px;
+            height: 46px;
+            background: rgba(255, 170, 0, 0.6);
             border: 2px solid #ffaa00;
-            color: #fff;
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 6px;
+            border-radius: 50%;
+            pointer-events: none;
+            transition: transform 0.05s linear;
         }
-
-        .dpad-btn:active {
-            background: rgba(255, 170, 0, 0.75);
-        }
-
-        #btn-up { top: 0; left: 32px; width: 40px; height: 34px; }
-        #btn-down { bottom: 0; left: 32px; width: 40px; height: 34px; }
-        #btn-left { top: 34px; left: 0; width: 34px; height: 37px; }
-        #btn-right { top: 34px; right: 0; width: 34px; height: 37px; }
 
         #btn-action-space {
             pointer-events: auto;
-            width: 80px;
-            height: 80px;
+            width: 75px;
+            height: 75px;
             background: radial-gradient(circle, #ff5500 0%, #aa0000 100%);
             border: 3px solid #ffcc00;
             border-radius: 50%;
             color: #fff;
             font-family: 'Press Start 2P', monospace;
-            font-size: 9px;
+            font-size: 8.5px;
             text-align: center;
             box-shadow: 0 4px 15px rgba(255, 80, 0, 0.6);
             display: flex;
@@ -231,7 +228,7 @@
             object-fit: contain;
         }
 
-        /* Pantalles superposades (Menús) */
+        /* Pantalles superposades (Menús) - Pujades i adaptades */
         .overlay {
             position: absolute;
             top: 0;
@@ -241,10 +238,10 @@
             background: rgba(12, 10, 16, 0.98);
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
             text-align: center;
-            padding: 20px;
+            padding: 40px 15px 20px 15px;
             z-index: 50;
             overflow-y: auto;
         }
@@ -255,36 +252,37 @@
 
         h1 {
             color: #ffcc00;
-            font-size: 20px;
-            text-shadow: 3px 3px 0 #b32400;
-            margin-bottom: 10px;
-            line-height: 1.3;
+            font-size: 18px;
+            text-shadow: 2px 2px 0 #b32400;
+            margin-top: 5px;
+            margin-bottom: 8px;
+            line-height: 1.2;
         }
 
         p {
-            font-size: 8px;
-            line-height: 1.6;
+            font-size: 7.5px;
+            line-height: 1.5;
             color: #ddd;
-            max-width: 600px;
-            margin-bottom: 12px;
+            max-width: 550px;
+            margin-bottom: 8px;
         }
 
         .controls-box {
             background: rgba(255, 170, 0, 0.1);
             border: 2px dashed #ffaa00;
-            padding: 8px 14px;
+            padding: 6px 10px;
             border-radius: 6px;
-            margin-bottom: 14px;
-            font-size: 7.5px;
-            line-height: 1.7;
+            margin-bottom: 10px;
+            font-size: 7px;
+            line-height: 1.5;
             color: #ffdd88;
             text-align: left;
         }
 
         button.main-btn {
             font-family: 'Press Start 2P', monospace, sans-serif;
-            font-size: 11px;
-            padding: 12px 22px;
+            font-size: 10px;
+            padding: 10px 18px;
             background-color: #ffaa00;
             color: #111;
             border: 3px solid #fff;
@@ -292,6 +290,7 @@
             cursor: pointer;
             box-shadow: 0 4px 0 #994400;
             pointer-events: auto;
+            margin-top: 5px;
         }
 
         button.main-btn:active {
@@ -302,10 +301,10 @@
         /* Estil Arcade 80s per al Selector de Lletres i TOP 10 */
         .arcade-input-container {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             justify-content: center;
             align-items: center;
-            margin: 12px 0;
+            margin: 8px 0;
         }
 
         .letter-box {
@@ -314,44 +313,44 @@
             align-items: center;
             background: #000;
             border: 2px solid #ffcc00;
-            padding: 6px 10px;
+            padding: 4px 8px;
             border-radius: 4px;
         }
 
         .letter-display {
-            font-size: 26px;
+            font-size: 22px;
             color: #00ff88;
-            margin: 4px 0;
-            text-shadow: 0 0 10px rgba(0,255,136,0.6);
+            margin: 3px 0;
+            text-shadow: 0 0 8px rgba(0,255,136,0.6);
         }
 
         .letter-btn {
             background: #332a15;
             color: #ffaa00;
             border: 1px solid #ffaa00;
-            font-size: 10px;
-            padding: 4px 8px;
+            font-size: 9px;
+            padding: 3px 6px;
             cursor: pointer;
             font-family: 'Press Start 2P', monospace;
         }
 
         .top10-table {
             width: 100%;
-            max-width: 360px;
-            font-size: 8px;
+            max-width: 340px;
+            font-size: 7.5px;
             border-collapse: collapse;
-            margin-top: 5px;
-            margin-bottom: 12px;
+            margin-top: 2px;
+            margin-bottom: 8px;
         }
 
         .top10-table th {
             color: #ffaa00;
             border-bottom: 1px dashed #ffaa00;
-            padding-bottom: 4px;
+            padding-bottom: 3px;
         }
 
         .top10-table td {
-            padding: 4px 0;
+            padding: 3px 0;
             color: #ddd;
         }
 
@@ -360,6 +359,7 @@
             font-weight: bold;
         }
 
+        /* Adaptació total a pantalla vertical en mòbil */
         @media (max-aspect-ratio: 4/3), (max-width: 700px) {
             body {
                 justify-content: flex-start;
@@ -368,8 +368,15 @@
             #game-wrapper {
                 width: 100vw;
                 height: 100vh;
+                max-width: none;
+                max-height: none;
                 border: none;
                 border-radius: 0;
+            }
+            canvas {
+                width: 100%;
+                height: calc(100vh - 165px);
+                object-fit: cover;
             }
         }
     </style>
@@ -403,13 +410,10 @@
         </div>
     </div>
 
-    <!-- Controls Tàctils per a Mòbil -->
+    <!-- Joystick Virtual i Botó per a Mòbil -->
     <div id="mobile-controls">
-        <div class="dpad">
-            <div class="dpad-btn" id="btn-up">▲</div>
-            <div class="dpad-btn" id="btn-down">▼</div>
-            <div class="dpad-btn" id="btn-left">◀</div>
-            <div class="dpad-btn" id="btn-right">▶</div>
+        <div id="virtual-joystick-base">
+            <div id="virtual-joystick-stick"></div>
         </div>
         <div id="btn-action-space">BALLAR</div>
     </div>
@@ -438,11 +442,11 @@
 
     <!-- Pantalla d'Inici -->
     <div id="screen-start" class="overlay">
-        <h1>CORREFOC<br><span style="font-size:14px; color:#ff6600;">EL BALL DEL DIABLE</span></h1>
-        <p>Ets un diable al mig de la plaça. Tens <strong>1 sol intent de 20 segons</strong> abans del tro final per posar el màxim de gent a ballar sota el teu foc!</p>
+        <h1>FOC<br><span style="font-size:11px; color:#ff6600;">EL BALL DEL DIABLE</span></h1>
+        <p>Ets un diable al mig de la plaça. Tens <strong>1 sol intent de 20 segons</strong> abans del tro final.</p>
         <div class="controls-box">
-            🥁 <strong>ELS TABALERS:</strong> A la cantonada esquerra toquen el tambor marcant el ritme.<br>
-            🌐 <strong>TOP-10 GLOBAL:</strong> Les puntuacions es guarden al núvol!
+            🎯 <strong>OBJECTIU:</strong> Atreure a la gent perquè s'ho passi bé a prop teu.<br>
+            📱 <strong>Mòbil:</strong> Mou el joystick virtual tàctil per moure't per la plaça.
         </div>
         <button type="button" class="main-btn" onclick="this.blur(); iniciarJoc();">ENCENDRE LA METXA!</button>
     </div>
@@ -469,7 +473,7 @@
                 <button class="letter-btn" onclick="canviarLletra(2, -1)">▼</button>
             </div>
         </div>
-        <p style="font-size:7px; color:#aaa; margin-bottom:12px;">(Fes servir UP/DOWN per canviar lletra, LEFT/RIGHT per moure't, ESPAI/ENTER per desar)</p>
+        <p style="font-size:6.5px; color:#aaa; margin-bottom:8px;">(Fes servir UP/DOWN per canviar lletra, LEFT/RIGHT per moure't, ESPAI/ENTER per desar)</p>
         <button type="button" class="main-btn" onclick="this.blur(); guardarPuntuacioGlobal();">DESAR AL TOP-10 GLOBAL</button>
     </div>
 
@@ -477,7 +481,7 @@
     <div id="screen-top10" class="overlay hidden">
         <h1>🌟 RÈCORDS MUNDIALS TOP-10 🌟</h1>
         <table class="top10-table" id="top10-table-content">
-            <tr><td colspan="3" style="text-align:center; padding:10px;">Carregant rànquing global...</td></tr>
+            <tr><td colspan="3" style="text-align:center; padding:8px;">Carregant rànquing global...</td></tr>
         </table>
         <button type="button" class="main-btn" onclick="this.blur(); reiniciarComplet();">TORNAR A JUGAR</button>
     </div>
@@ -485,7 +489,7 @@
 
 <script>
 // ==========================================================
-// CONFIGURACIÓ DE L'API GLOBAL (Canvia-ho per la teva URL de SheetDB)
+// CONFIGURACIÓ DE L'API GLOBAL (SheetDB)
 // ==========================================================
 const SHEETDB_API_URL = 'https://sheetdb.io/api/v1/c3a6hbl4dyxx2';
 
@@ -551,6 +555,11 @@ const keys = {
     W: false, S: false, A: false, D: false
 };
 
+// Variables per al Joystick Virtual
+let joystickMove = { x: 0, y: 0 };
+let joystickActive = false;
+let joystickTouchId = null;
+
 const player = {
     x: 425, y: 330, speed: 230, rhythm: 0, maceAngle: 0,
     spinBoost: 0, jumpOffset: 0, jumpPhase: 0, facing: 1,
@@ -559,12 +568,12 @@ const player = {
 
 const igniter = { x: -60, y: 330, maceAngle: 0 };
 
-// 4 Tabalers a la cantonada inferior esquerra (ben visibles)
+// 4 Tabalers a la cantonada superior esquerra
 const tabalers = [
-    { x: 75, y: 480, drumPhase: 0 },
-    { x: 125, y: 500, drumPhase: Math.PI * 0.5 },
-    { x: 70, y: 535, drumPhase: Math.PI },
-    { x: 130, y: 555, drumPhase: Math.PI * 1.5 }
+    { x: 65, y: 130, drumPhase: 0 },
+    { x: 110, y: 145, drumPhase: Math.PI * 0.5 },
+    { x: 60, y: 175, drumPhase: Math.PI },
+    { x: 115, y: 190, drumPhase: Math.PI * 1.5 }
 ];
 
 let crowd = [];
@@ -626,7 +635,7 @@ async function guardarPuntuacioGlobal() {
     lastSavedInitials = initials;
     
     screenHighscore.classList.add('hidden');
-    document.getElementById('top10-table-content').innerHTML = `<tr><td colspan="3" style="text-align:center; padding:10px;">Desant al núvol...</td></tr>`;
+    document.getElementById('top10-table-content').innerHTML = `<tr><td colspan="3" style="text-align:center; padding:8px;">Desant al núvol...</td></tr>`;
     screenTop10.classList.remove('hidden');
 
     try {
@@ -647,7 +656,7 @@ async function mostrarPantallaTop10() {
     let html = `<tr><th>POS</th><th>INIC</th><th>PUNTS</th></tr>`;
     
     if (scores.length === 0) {
-        html += `<tr><td colspan="3" style="text-align:center; padding:10px;">No s'ha pogut carregar el rànquing.</td></tr>`;
+        html += `<tr><td colspan="3" style="text-align:center; padding:8px;">No s'ha pogut carregar el rànquing.</td></tr>`;
     } else {
         scores.forEach((sc, idx) => {
             const isCurrent = (sc.name === lastSavedInitials && parseInt(sc.score) === totalGameScore);
@@ -684,49 +693,80 @@ window.activarTrucTactic = function(trickKey) {
     }
 };
 
-function setupTouchControls() {
-    const mapTouch = (id, keyName, isSpace = false) => {
-        const el = document.getElementById(id);
-        if (!el) return;
-        el.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            if (isSpace) {
-                if (gameState === 'PLAYING') triggerDanceSpace();
-            } else {
-                keys[keyName] = true;
+// Configuració del Joystick Virtual tàctil
+function setupJoystick() {
+    const base = document.getElementById('virtual-joystick-base');
+    const stick = document.getElementById('virtual-joystick-stick');
+    const maxDist = 32;
+
+    base.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        const touch = e.changedTouches[0];
+        joystickTouchId = touch.identifier;
+        joystickActive = true;
+        updateJoystickPosition(touch);
+    }, {passive: false});
+
+    window.addEventListener('touchmove', (e) => {
+        if (!joystickActive) return;
+        for (let i = 0; i < e.changedTouches.length; i++) {
+            const touch = e.changedTouches[i];
+            if (touch.identifier === joystickTouchId) {
+                e.preventDefault();
+                updateJoystickPosition(touch);
             }
-        });
-        el.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            if (!isSpace) keys[keyName] = false;
-        });
-    };
-
-    mapTouch('btn-up', 'ArrowUp');
-    mapTouch('btn-down', 'ArrowDown');
-    mapTouch('btn-left', 'ArrowLeft');
-    mapTouch('btn-right', 'ArrowRight');
-    mapTouch('btn-action-space', '', true);
-
-    let lastTapLeft = 0;
-    document.getElementById('btn-left').addEventListener('touchstart', (e) => {
-        const now = performance.now();
-        if (now - lastTapLeft < 350 && gameState === 'PLAYING' && trickCooldowns.bruixa <= 0) {
-            executeBruixaTrick(-1);
         }
-        lastTapLeft = now;
-    });
+    }, {passive: false});
 
-    let lastTapRight = 0;
-    document.getElementById('btn-right').addEventListener('touchstart', (e) => {
-        const now = performance.now();
-        if (now - lastTapRight < 350 && gameState === 'PLAYING' && trickCooldowns.bruixa <= 0) {
-            executeBruixaTrick(1);
+    window.addEventListener('touchend', (e) => {
+        if (!joystickActive) return;
+        for (let i = 0; i < e.changedTouches.length; i++) {
+            const touch = e.changedTouches[i];
+            if (touch.identifier === joystickTouchId) {
+                joystickActive = false;
+                joystickMove = { x: 0, y: 0 };
+                stick.style.transform = `translate(0px, 0px)`;
+            }
         }
-        lastTapRight = now;
+    }, {passive: false});
+
+    function updateJoystickPosition(touch) {
+        const rect = base.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        
+        let dx = touch.clientX - centerX;
+        let dy = touch.clientY - centerY;
+        const dist = Math.hypot(dx, dy);
+
+        if (dist > maxDist) {
+            dx = (dx / dist) * maxDist;
+            dy = (dy / dist) * maxDist;
+        }
+
+        stick.style.transform = `translate(${dx}px, ${dy}px)`;
+        joystickMove = { x: dx / maxDist, y: dy / maxDist };
+
+        if (Math.abs(joystickMove.x) > 0.8) {
+            const now = performance.now();
+            const dir = Math.sign(joystickMove.x);
+            if (window.lastJoystickTapDir === dir && now - window.lastJoystickTapTime < 350 && gameState === 'PLAYING' && trickCooldowns.bruixa <= 0) {
+                executeBruixaTrick(dir);
+                window.lastJoystickTapTime = 0;
+            } else {
+                window.lastJoystickTapDir = dir;
+                window.lastJoystickTapTime = now;
+            }
+        }
+    }
+
+    const spaceBtn = document.getElementById('btn-action-space');
+    spaceBtn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        if (gameState === 'PLAYING') triggerDanceSpace();
     });
 }
-setupTouchControls();
+setupJoystick();
 
 function triggerDanceSpace() {
     player.rhythm = Math.min(100, player.rhythm + 9);
@@ -1113,10 +1153,15 @@ function update(dt) {
     }
 
     let dx = 0, dy = 0;
-    if (keys.ArrowLeft || keys.a || keys.A) dx -= 1;
-    if (keys.ArrowRight || keys.d || keys.D) dx += 1;
-    if (keys.ArrowUp || keys.w || keys.W) dy -= 1;
-    if (keys.ArrowDown || keys.s || keys.S) dy += 1;
+    if (joystickActive) {
+        dx = joystickMove.x;
+        dy = joystickMove.y;
+    } else {
+        if (keys.ArrowLeft || keys.a || keys.A) dx -= 1;
+        if (keys.ArrowRight || keys.d || keys.D) dx += 1;
+        if (keys.ArrowUp || keys.w || keys.W) dy -= 1;
+        if (keys.ArrowDown || keys.s || keys.S) dy += 1;
+    }
 
     if (player.bruixaTimer > 0) {
         player.bruixaTimer -= dt;
@@ -1134,7 +1179,7 @@ function update(dt) {
         const isMoving = (dx !== 0 || dy !== 0);
         if (isMoving) {
             const len = Math.hypot(dx, dy);
-            dx /= len; dy /= len;
+            if (len > 1) { dx /= len; dy /= len; }
             player.x += dx * player.speed * dt;
             player.y += dy * player.speed * dt;
             if (dx !== 0) player.facing = Math.sign(dx);
@@ -1314,11 +1359,9 @@ function drawTabaler(t) {
     const y = t.y - bob;
 
     ctx.save();
-    // Sombra
     ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
     ctx.beginPath(); ctx.ellipse(x, t.y + 6, 11, 4, 0, 0, Math.PI * 2); ctx.fill();
 
-    // Pantalons negres i grocs
     ctx.fillStyle = '#111115';
     ctx.fillRect(x - 5, y + 2, 4, 9);
     ctx.fillRect(x + 1, y + 2, 4, 9);
@@ -1326,13 +1369,11 @@ function drawTabaler(t) {
     ctx.fillRect(x - 4, y + 6, 2, 3);
     ctx.fillRect(x + 2, y + 6, 2, 3);
 
-    // Casaca de diable
     ctx.fillStyle = '#111115';
     ctx.fillRect(x - 8, y - 9, 16, 12);
     ctx.fillStyle = '#ffcc00';
     ctx.fillRect(x - 8, y - 3, 16, 2);
 
-    // Caputxa i banyes
     ctx.fillStyle = '#111115';
     ctx.beginPath(); ctx.arc(x, y - 14, 7.5, 0, Math.PI * 2); ctx.fill();
     ctx.strokeStyle = '#ffcc00'; ctx.lineWidth = 1.2; ctx.stroke();
@@ -1341,23 +1382,19 @@ function drawTabaler(t) {
     ctx.beginPath(); ctx.moveTo(x - 6, y - 18); ctx.lineTo(x - 11, y - 25); ctx.lineTo(x - 3, y - 20); ctx.fill();
     ctx.beginPath(); ctx.moveTo(x + 6, y - 18); ctx.lineTo(x + 11, y - 25); ctx.lineTo(x + 3, y - 20); ctx.fill();
 
-    // Ulls
     ctx.fillStyle = '#ffdd00';
     ctx.fillRect(x - 3, y - 15, 2, 2);
     ctx.fillRect(x + 1, y - 15, 2, 2);
 
-    // Tambor gran davant del cos
     ctx.fillStyle = '#e6c280';
     ctx.fillRect(x - 11, y - 4, 22, 11);
     ctx.fillStyle = '#ffffff';
-    ctx.fillRect(x - 11, y - 4, 22, 2.5); // pegat superior
-    ctx.fillRect(x - 11, y + 4.5, 22, 2.5); // pegat inferior
+    ctx.fillRect(x - 11, y - 4, 22, 2.5);
+    ctx.fillRect(x - 11, y + 4.5, 22, 2.5);
 
-    // Vora vermella del tambor
     ctx.fillStyle = '#aa0000';
     ctx.fillRect(x - 11, y - 1, 22, 1.5);
 
-    // Baquetes animades colpejant el tambor
     ctx.strokeStyle = '#d4a373';
     ctx.lineWidth = 2.5;
     const hitOffset = Math.sin(t.drumPhase * 2) * 4;
@@ -1489,8 +1526,6 @@ function draw() {
 
     const renderList = [];
     crowd.forEach(p => renderList.push({ y: p.y, drawFn: () => drawCoveredPerson(p) }));
-    
-    // Dibuixar els 4 tabalers a la cantonada esquerra
     tabalers.forEach(t => renderList.push({ y: t.y, drawFn: () => drawTabaler(t) }));
 
     renderList.push({
