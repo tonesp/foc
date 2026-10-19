@@ -441,7 +441,8 @@
         <h1>CORREFOC<br><span style="font-size:14px; color:#ff6600;">EL BALL DEL DIABLE</span></h1>
         <p>Ets un diable al mig de la plaça. Tens <strong>1 sol intent de 20 segons</strong> abans del tro final per posar el màxim de gent a ballar sota el teu foc!</p>
         <div class="controls-box">
-            🌐 <strong>TOP-10 GLOBAL:</strong> Les puntuacions es guarden al núvol per competir amb tothom!
+            🥁 <strong>ELS TABALERS:</strong> A la cantonada toquen el tambor marcant el ritme.<br>
+            🌐 <strong>TOP-10 GLOBAL:</strong> Les puntuacions es guarden al núvol!
         </div>
         <button type="button" class="main-btn" onclick="this.blur(); iniciarJoc();">ENCENDRE LA METXA!</button>
     </div>
@@ -483,8 +484,11 @@
 </div>
 
 <script>
-// Substitueix aquesta URL per la teva API gratuïta de SheetDB
+// ==========================================================
+// CONFIGURACIÓ DE L'API GLOBAL (Canvia-ho per la teva URL de SheetDB)
+// ==========================================================
 const SHEETDB_API_URL = 'https://sheetdb.io/api/v1/c3a6hbl4dyxx2';
+
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -555,6 +559,14 @@ const player = {
 
 const igniter = { x: -60, y: 330, maceAngle: 0 };
 
+// 4 Tabalers a la cantonada inferior esquerra
+const tabalers = [
+    { x: 55, y: 520, drumPhase: 0 },
+    { x: 90, y: 535, drumPhase: Math.PI * 0.5 },
+    { x: 50, y: 560, drumPhase: Math.PI },
+    { x: 95, y: 575, drumPhase: Math.PI * 1.5 }
+];
+
 let crowd = [];
 let sparks = [];
 let smoke = [];
@@ -597,14 +609,12 @@ function actualitzarVisualLletres() {
     }
 }
 
-// Funcions per connectar amb Google Sheets (API Global)
 async function carregarTop10Global() {
     try {
         let response = await fetch(SHEETDB_API_URL);
         let data = await response.json();
-        // Ordenar de major a menor puntuació
         data.sort((a, b) => parseInt(b.score) - parseInt(a.score));
-        return data.slice(0, 10); // Retornar el TOP 10
+        return data.slice(0, 10);
     } catch(e) {
         console.error("Error carregant rànquing global:", e);
         return [];
@@ -1017,6 +1027,10 @@ function triggerFinalExplosion() {
 }
 
 function update(dt) {
+    tabalers.forEach(t => {
+        t.drumPhase += dt * 14;
+    });
+
     if (gameState === 'IGNITING') {
         igniteProgress += dt;
         if (igniteProgress < 1.0) {
@@ -1294,6 +1308,54 @@ function drawCoveredPerson(p) {
     ctx.restore();
 }
 
+function drawTabaler(t) {
+    const bob = Math.abs(Math.sin(t.drumPhase)) * 4;
+    const x = t.x;
+    const y = t.y - bob;
+
+    ctx.save();
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+    ctx.beginPath(); ctx.ellipse(x, t.y + 8, 10, 4, 0, 0, Math.PI * 2); ctx.fill();
+
+    ctx.fillStyle = '#111115';
+    ctx.fillRect(x - 5, y + 2, 4, 8);
+    ctx.fillRect(x + 1, y + 2, 4, 8);
+    ctx.fillStyle = '#ffcc00';
+    ctx.fillRect(x - 4, y + 6, 2, 3);
+    ctx.fillRect(x + 2, y + 6, 2, 3);
+
+    ctx.fillStyle = '#111115';
+    ctx.fillRect(x - 7, y - 8, 14, 11);
+    ctx.fillStyle = '#ffcc00';
+    ctx.fillRect(x - 7, y - 2, 14, 2);
+
+    ctx.fillStyle = '#111115';
+    ctx.beginPath(); ctx.arc(x, y - 12, 6.5, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#ffcc00'; ctx.lineWidth = 1; ctx.stroke();
+
+    ctx.fillStyle = '#ffcc00';
+    ctx.beginPath(); ctx.moveTo(x - 5, y - 16); ctx.lineTo(x - 9, y - 22); ctx.lineTo(x - 2, y - 18); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(x + 5, y - 16); ctx.lineTo(x + 9, y - 22); ctx.lineTo(x + 2, y - 18); ctx.fill();
+
+    ctx.fillStyle = '#e6c280';
+    ctx.fillRect(x - 9, y - 3, 18, 9);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(x - 9, y - 3, 18, 2);
+    ctx.fillRect(x - 9, y + 3, 18, 2);
+
+    ctx.strokeStyle = '#d4a373';
+    ctx.lineWidth = 2;
+    const hitOffset = Math.sin(t.drumPhase * 2) * 3;
+    ctx.beginPath();
+    ctx.moveTo(x - 12, y - 10 - hitOffset);
+    ctx.lineTo(x - 4, y - 2);
+    ctx.moveTo(x + 12, y - 10 + hitOffset);
+    ctx.lineTo(x + 4, y - 2);
+    ctx.stroke();
+
+    ctx.restore();
+}
+
 function drawDiable(x, y, jumpOffset, maceAngle, isLit, isBruixaMode = false, bruixaDir = 1) {
     const dy = y - jumpOffset;
     ctx.save();
@@ -1412,6 +1474,8 @@ function draw() {
 
     const renderList = [];
     crowd.forEach(p => renderList.push({ y: p.y, drawFn: () => drawCoveredPerson(p) }));
+    tabalers.forEach(t => renderList.push({ y: t.y, drawFn: () => drawTabaler(t) }));
+
     renderList.push({
         y: player.y,
         drawFn: () => drawDiable(player.x, player.y, player.jumpOffset, player.maceAngle, gameState === 'PLAYING' || (gameState === 'IGNITING' && igniteProgress > 1.8), player.bruixaTimer > 0, player.bruixaDir)
