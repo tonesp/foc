@@ -238,14 +238,14 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(12, 10, 16, 0.98);
+            background: rgba(12, 10, 16, 0.95);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
             padding: 20px;
-            z-index: 50;
+            z-index: 30;
             overflow-y: auto;
         }
 
@@ -255,14 +255,14 @@
 
         h1 {
             color: #ffcc00;
-            font-size: 20px;
+            font-size: 21px;
             text-shadow: 3px 3px 0 #b32400;
             margin-bottom: 10px;
             line-height: 1.3;
         }
 
         p {
-            font-size: 8px;
+            font-size: 8.5px;
             line-height: 1.6;
             color: #ddd;
             max-width: 600px;
@@ -317,7 +317,7 @@
             gap: 15px;
             justify-content: center;
             align-items: center;
-            margin: 12px 0;
+            margin: 15px 0;
         }
 
         .letter-box {
@@ -326,14 +326,14 @@
             align-items: center;
             background: #000;
             border: 2px solid #ffcc00;
-            padding: 6px 10px;
+            padding: 8px 12px;
             border-radius: 4px;
         }
 
         .letter-display {
-            font-size: 26px;
+            font-size: 28px;
             color: #00ff88;
-            margin: 4px 0;
+            margin: 6px 0;
             text-shadow: 0 0 10px rgba(0,255,136,0.6);
         }
 
@@ -349,11 +349,11 @@
 
         .top10-table {
             width: 100%;
-            max-width: 360px;
+            max-width: 380px;
             font-size: 8px;
             border-collapse: collapse;
             margin-top: 5px;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
         }
 
         .top10-table th {
@@ -372,6 +372,7 @@
             font-weight: bold;
         }
 
+        /* Adaptació automàtica quan el mòbil està en vertical */
         @media (max-aspect-ratio: 4/3), (max-width: 700px) {
             body {
                 justify-content: flex-start;
@@ -451,17 +452,25 @@
     <!-- Pantalla d'Inici -->
     <div id="screen-start" class="overlay">
         <h1>CORREFOC<br><span style="font-size:14px; color:#ff6600;">EL BALL DEL DIABLE</span></h1>
-        <p>Ets un diable al mig de la plaça. Tens <strong>1 sol intent de 20 segons</strong> abans del tro final per posar el màxim de gent a ballar sota el teu foc!</p>
+        <p>Ets un diable al mig de la plaça. Tens <strong>20 segons</strong> abans del tro final per posar el màxim de gent a ballar sota el teu foc!</p>
         <div class="controls-box">
-            📱 <strong>Mòbil / PC:</strong> Mou-te, balla amb l'espai i fes trucs (es recarreguen en 5s). Aconsegueix entrar al TOP-10 arcade!
+            📱 <strong>Mòbil / PC:</strong> Mou-te, balla amb l'espai i fes trucs (es recarreguen en 5s). Supera el TOP-10 arcade!
         </div>
         <button type="button" class="main-btn" onclick="this.blur(); iniciarJoc();">ENCENDRE LA METXA!</button>
     </div>
 
+    <!-- Pantalla entre intents -->
+    <div id="screen-round" class="overlay hidden">
+        <h1 id="round-title">HA PETAT LA CARRETILLA!</h1>
+        <p id="round-desc">El tro final ha fet córrer a tothom!</p>
+        <div class="score-board" id="round-scores"></div>
+        <button type="button" class="main-btn" onclick="this.blur(); seguentIntent();">SEGÜENT INTENT</button>
+    </div>
+
     <!-- Pantalla de Desar Puntuació (Estil Arcade 80s) -->
     <div id="screen-highscore" class="overlay hidden">
-        <h1>🏆 FI DE PARTIDA! 🏆</h1>
-        <p>Introdueix les teves 3 lletres per al TOP-10:</p>
+        <h1>🏆 NOVA PUNTUACIÓ! 🏆</h1>
+        <p>Has aconseguit un gran rècord al Correfoc!<br>Introdueix les teves 3 lletres:</p>
         
         <div class="arcade-input-container">
             <div class="letter-box">
@@ -480,11 +489,11 @@
                 <button class="letter-btn" onclick="canviarLletra(2, -1)">▼</button>
             </div>
         </div>
-        <p style="font-size:7px; color:#aaa; margin-bottom:12px;">(Fes servir UP/DOWN per canviar lletra, LEFT/RIGHT per moure't, ESPAI/ENTER per desar)</p>
+        <p style="font-size:7px; color:#aaa; margin-bottom:12px;">(Fes servir UP/DOWN per canviar lletra, LEFT/RIGHT per moure't, ESPAI per desar)</p>
         <button type="button" class="main-btn" onclick="this.blur(); guardarPuntuacioArcade();">DESAR AL TOP-10</button>
     </div>
 
-    <!-- Pantalla TOP-10 -->
+    <!-- Pantalla TOP-10 / Final -->
     <div id="screen-top10" class="overlay hidden">
         <h1>🌟 RÈCORDS TOP-10 🌟</h1>
         <table class="top10-table" id="top10-table-content">
@@ -505,6 +514,7 @@ const hudPeak = document.getElementById('hud-peak');
 const rhythmFill = document.getElementById('rhythm-bar-fill');
 
 const screenStart = document.getElementById('screen-start');
+const screenRound = document.getElementById('screen-round');
 const screenHighscore = document.getElementById('screen-highscore');
 const screenTop10 = document.getElementById('screen-top10');
 const mobileControls = document.getElementById('mobile-controls');
@@ -523,9 +533,10 @@ let lastFrameTime = 0;
 let underCount = 0;
 let roundPeak = 0;
 let totalGameScore = 0;
+let attemptScores = [];
 
 // Sistema Arcade 3 lletres
-let currentLetters = [0, 0, 0];
+let currentLetters = [0, 0, 0]; // Indexs de A-Z
 const alfabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 let activeLetterIdx = 0;
 let lastScoreSavedIndex = -1;
@@ -581,11 +592,63 @@ for (let i = 0; i < 95; i++) {
 }
 
 window.iniciarJoc = function() {
+    currentAttempt = 1;
+    attemptScores = [];
     totalGameScore = 0;
     screenStart.classList.add('hidden');
+    screenRound.classList.add('hidden');
     screenHighscore.classList.add('hidden');
     screenTop10.classList.add('hidden');
     startAttempt();
+};
+
+window.reiniciarComplet = function() {
+    screenTop10.classList.add('hidden');
+    screenStart.classList.remove('hidden');
+    gameState = 'MENU';
+};
+
+// Gestió de les 3 lletres estil Arcade
+window.canviarLletra = function(pos, dir) {
+    currentLetters[pos] = (currentLetters[pos] + dir + alfabet.length) % alfabet.length;
+    actualitzarVisualLletres();
+};
+
+function actualitzarVisualLletres() {
+    for(let i=0; i<3; i++) {
+        const el = document.getElementById(`char-${i}`);
+        el.textContent = alfabet[currentLetters[i]];
+        el.style.color = (i === activeLetterIdx) ? '#00ff88' : '#fff';
+    }
+}
+
+function carregarTop10() {
+    let scores = [];
+    try {
+        scores = JSON.parse(localStorage.getItem('correfoc_top10')) || [];
+    } catch(e) {
+        scores = [];
+    }
+    return scores;
+}
+
+function desarTop10(scores) {
+    localStorage.setItem('correfoc_top10', JSON.stringify(scores));
+}
+
+window.guardarPuntuacioArcade = function() {
+    const initials = alfabet[currentLetters[0]] + alfabet[currentLetters[1]] + alfabet[currentLetters[2]];
+    let scores = carregarTop10();
+    
+    scores.push({ name: initials, score: totalGameScore });
+    scores.sort((a, b) => b.score - a.score);
+    if (scores.length > 10) scores = scores.slice(0, 10);
+    
+    desarTop10(scores);
+    lastScoreSavedIndex = scores.findIndex(s => s.name === initials && s.score === totalGameScore);
+    
+    screenHighscore.classList.add('hidden');
+    mostrarPantallaTop10();
 };
 
 window.reiniciarComplet = function() {
@@ -746,6 +809,7 @@ window.addEventListener('keydown', (e) => {
 
     if (keys.hasOwnProperty(e.key)) keys[e.key] = true;
 
+    // Si estem a la pantalla de guardar puntuació (Arcade 80s)
     if (gameState === 'HIGHSCORE') {
         if (e.key === 'ArrowUp' || e.key === 'w') {
             canviarLletra(activeLetterIdx, 1);
@@ -1246,6 +1310,28 @@ function updateHUD() {
     hudUnder.textContent = underCount;
     hudPeak.textContent = roundPeak;
     rhythmFill.style.width = `${player.rhythm}%`;
+}
+
+function showRoundResults() {
+    const lastScore = attemptScores[attemptScores.length - 1];
+    if (currentAttempt < maxAttempts) {
+        gameState = 'ROUND_END';
+        document.getElementById('round-title').textContent = `FI DE L'INTENT ${currentAttempt}!`;
+        document.getElementById('round-scores').innerHTML = `
+            Gent sota les espurnes abans del tro: <strong style="color:#00ff88">${lastScore.finalUnder}</strong><br>
+            Pic màxim en aquests 20s: <strong style="color:#ffdd00">${lastScore.peakUnder} persones</strong>
+        `;
+        screenRound.classList.remove('hidden');
+    } else {
+        gameState = 'HIGHSCORE';
+        totalGameScore = attemptScores.reduce((acc, sc) => acc + sc.peakUnder, 0);
+        
+        currentLetters = [0, 0, 0];
+        activeLetterIdx = 0;
+        actualitzarVisualLletres();
+        
+        screenHighscore.classList.remove('hidden');
+    }
 }
 
 function drawCoveredPerson(p) {
