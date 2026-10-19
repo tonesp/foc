@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- Capçaleres Anti-Cache per evitar versions antigues -->
+    <!-- Capçaleres Anti-Cache -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
@@ -31,6 +31,54 @@
             min-height: 100vh;
             overflow: hidden;
             touch-action: none;
+        }
+
+        /* Pantalla d'avís per girar el mòbil quan està en vertical */
+        #rotate-screen-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #0d0c10;
+            z-index: 99999;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            pointer-events: auto;
+        }
+
+        #rotate-screen-overlay.visible {
+            display: flex;
+        }
+
+        .rotate-icon {
+            width: 70px;
+            height: 70px;
+            border: 4px solid #ffaa00;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            animation: rotateAnim 2s infinite ease-in-out;
+            position: relative;
+        }
+
+        .rotate-icon::after {
+            content: '↺';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 32px;
+            color: #ffcc00;
+        }
+
+        @keyframes rotateAnim {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(90deg); }
+            100% { transform: rotate(0deg); }
         }
 
         #game-wrapper {
@@ -108,62 +156,6 @@
             transition: width 0.08s linear;
         }
 
-        /* Barra Inferior de Trucs */
-        #tricks-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 38px;
-            background: rgba(10, 10, 14, 0.95);
-            border-top: 2px solid #ffaa00;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            font-size: 6px;
-            color: #ffdd88;
-            z-index: 10;
-            padding: 0 4px;
-        }
-
-        .trick-slot {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-            padding: 2px 4px;
-            border-radius: 4px;
-            background: #221c10;
-            border: 1px solid #aa7700;
-            cursor: pointer;
-        }
-
-        .trick-slot:active {
-            transform: scale(0.93);
-            background: #ffaa00;
-            color: #111;
-        }
-
-        .trick-slot.cooldown {
-            opacity: 0.45;
-            filter: grayscale(80%);
-            pointer-events: none;
-        }
-
-        .trick-cd-label {
-            color: #ff5555;
-            font-size: 5.5px;
-        }
-
-        .key-badge {
-            background: #332a15;
-            border: 1px solid #ffaa00;
-            padding: 1px 2px;
-            border-radius: 3px;
-            color: #fff;
-            font-size: 5px;
-        }
-
         canvas {
             display: block;
             width: 100%;
@@ -184,47 +176,70 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 20px;
+            padding: 15px;
             z-index: 50;
             overflow-y: auto;
+        }
+
+        #screen-start {
+            justify-content: center;
+            padding-bottom: 70px;
         }
 
         .hidden {
             display: none !important;
         }
 
-        h1 {
+        /* Lletres més grans a la pantalla inicial */
+        h1.big-title {
             color: #ffcc00;
-            font-size: 20px;
-            text-shadow: 2px 2px 0 #b32400;
-            margin-bottom: 8px;
-            line-height: 1.2;
+            font-size: 44px;
+            text-shadow: 4px 4px 0 #b32400, 0 0 20px rgba(255,120,0,0.6);
+            margin-top: 0;
+            margin-bottom: 6px;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: #ff6600;
+            margin-bottom: 16px;
+            text-shadow: 2px 2px 0 #111;
+        }
+
+        #screen-start p {
+            font-size: 9.5px;
+            line-height: 1.7;
+            color: #eee;
+            max-width: 650px;
+            margin-bottom: 14px;
         }
 
         p {
-            font-size: 8px;
-            line-height: 1.5;
+            font-size: 7.5px;
+            line-height: 1.6;
             color: #ddd;
-            max-width: 600px;
+            max-width: 550px;
             margin-bottom: 10px;
         }
 
         .controls-box {
-            background: rgba(255, 170, 0, 0.1);
+            background: rgba(255, 170, 0, 0.12);
             border: 2px dashed #ffaa00;
-            padding: 8px 12px;
-            border-radius: 6px;
-            margin-bottom: 12px;
-            font-size: 7.5px;
-            line-height: 1.6;
+            padding: 12px 18px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 8.5px;
+            line-height: 1.7;
             color: #ffdd88;
             text-align: left;
+            max-width: 680px;
         }
 
         button.main-btn {
             font-family: 'Press Start 2P', monospace, sans-serif;
-            font-size: 10px;
-            padding: 10px 18px;
+            font-size: 13px;
+            padding: 14px 26px;
             background-color: #ffaa00;
             color: #111;
             border: 3px solid #fff;
@@ -232,11 +247,24 @@
             cursor: pointer;
             box-shadow: 0 4px 0 #994400;
             pointer-events: auto;
+            touch-action: manipulation;
         }
 
         button.main-btn:active {
             transform: translateY(2px);
             box-shadow: 0 2px 0 #994400;
+        }
+
+        .build-version-tag {
+            position: absolute;
+            bottom: 12px;
+            right: 14px;
+            font-size: 6.5px;
+            color: #726882;
+            letter-spacing: 1px;
+            font-family: 'Press Start 2P', monospace;
+            pointer-events: none;
+            opacity: 0.85;
         }
 
         /* Estil Arcade 80s per al Selector de Lletres i TOP 10 */
@@ -245,7 +273,7 @@
             gap: 15px;
             justify-content: center;
             align-items: center;
-            margin: 10px 0;
+            margin: 8px 0;
         }
 
         .letter-box {
@@ -254,14 +282,14 @@
             align-items: center;
             background: #000;
             border: 2px solid #ffcc00;
-            padding: 5px 8px;
+            padding: 4px 8px;
             border-radius: 4px;
         }
 
         .letter-display {
-            font-size: 24px;
+            font-size: 22px;
             color: #00ff88;
-            margin: 3px 0;
+            margin: 2px 0;
             text-shadow: 0 0 8px rgba(0,255,136,0.6);
         }
 
@@ -269,30 +297,32 @@
             background: #332a15;
             color: #ffaa00;
             border: 1px solid #ffaa00;
-            font-size: 9px;
-            padding: 3px 6px;
+            font-size: 8px;
+            padding: 2px 5px;
             cursor: pointer;
             font-family: 'Press Start 2P', monospace;
+            touch-action: manipulation;
         }
 
         .top10-table {
             width: 100%;
-            max-width: 350px;
-            font-size: 8px;
+            max-width: 450px;
+            font-size: 6.5px;
             border-collapse: collapse;
-            margin-top: 4px;
-            margin-bottom: 10px;
+            margin-top: 3px;
+            margin-bottom: 8px;
         }
 
         .top10-table th {
             color: #ffaa00;
             border-bottom: 1px dashed #ffaa00;
-            padding-bottom: 3px;
+            padding-bottom: 2px;
         }
 
         .top10-table td {
-            padding: 3px 0;
+            padding: 3px 2px;
             color: #ddd;
+            text-align: center;
         }
 
         .top10-table tr.current-score td {
@@ -309,17 +339,51 @@
                 border: none;
                 border-radius: 0;
             }
+            #screen-start {
+                padding-top: 15px;
+                padding-bottom: 45px;
+            }
+            h1.big-title {
+                font-size: 34px;
+                margin-bottom: 4px;
+            }
+            .subtitle {
+                font-size: 11px;
+                margin-bottom: 10px;
+            }
+            #screen-start p {
+                font-size: 8px;
+                line-height: 1.5;
+                margin-bottom: 8px;
+            }
+            .controls-box {
+                font-size: 7.5px;
+                line-height: 1.5;
+                padding: 8px 12px;
+                margin-bottom: 10px;
+            }
+            button.main-btn {
+                font-size: 11px;
+                padding: 10px 18px;
+            }
         }
     </style>
 </head>
 <body>
+
+<!-- Avís per girar el mòbil a horitzontal -->
+<div id="rotate-screen-overlay">
+    <div class="rotate-icon"></div>
+    <h1 style="color: #ffcc00; font-size: 16px; margin-bottom: 10px;">GIRA EL MÒBIL</h1>
+    <p style="font-size: 8px; color: #aaa; max-width: 280px; line-height: 1.6;">Aquest joc s'ha de gaudir en format horitzontal (landscape).</p>
+</div>
 
 <div id="game-wrapper">
     <!-- HUD Superior -->
     <div id="hud">
         <div class="hud-item">
             <span class="hud-label">INTENT</span>
-            <span class="hud-value" id="hud-attempt">1 / 1</span>
+            <span class="hud-value" id="hud-attempt">1 / 3</span>
         </div>
         <div class="hud-item">
             <span class="hud-label">TEMPS</span>
@@ -341,44 +405,24 @@
         </div>
     </div>
 
-    <!-- Barra Inferior de Trucs -->
-    <div id="tricks-bar">
-        <div class="trick-slot" id="slot-bruixa" onclick="activarTrucTactic('bruixa')">
-            <div>🧹 <strong>BRUIXA</strong></div>
-            <div id="keys-bruixa"><span class="key-badge">2 TAPS</span></div>
-        </div>
-        <div class="trick-slot" id="slot-roda" onclick="activarTrucTactic('roda')">
-            <div>🌪️ <strong>RODA</strong></div>
-            <div id="keys-roda"><span class="key-badge">◀▶</span> <span class="key-badge">ESP</span></div>
-        </div>
-        <div class="trick-slot" id="slot-salt" onclick="activarTrucTactic('salt')">
-            <div>💥 <strong>SALT</strong></div>
-            <div id="keys-salt"><span class="key-badge">▲▼</span> <span class="key-badge">ESP</span></div>
-        </div>
-        <div class="trick-slot" id="slot-carretillada" onclick="activarTrucTactic('carretillada')">
-            <div>🐉 <strong>DRAC</strong></div>
-            <div id="keys-carretillada"><span class="key-badge">3 TAPS</span></div>
-        </div>
-    </div>
-
     <canvas id="gameCanvas" width="850" height="600"></canvas>
 
     <!-- Pantalla d'Inici -->
     <div id="screen-start" class="overlay">
-        <h1>FOC<br><span style="font-size:12px; color:#ff6600;">EL BALL DEL DIABLE</span></h1>
-        <p>Ets un diable al mig de la plaça. Tens <strong>1 sol intent de 20 segons</strong> abans del tro final.</p>
+        <h1 class="big-title">FOC</h1>
+        <div class="subtitle">EL BALL DEL DIABLE</div>
+        <p>Ets un diable al mig de la plaça. Tens <strong>3 intents de 20 segons</strong> en total.</p>
         <div class="controls-box">
-            🎯 <strong>OBJECTIU:</strong> Atreure a la gent perquè s'ho passi bé a prop teu.<br>
-            📱 <strong>Mòbil:</strong> Toca i arrossega directament sobre el diable per moure't.<br>
-            ✨ <strong>TRUCS:</strong> Fes <strong>2 taps</strong> ràpidament per "La Bruixa", o <strong>3 taps</strong> per transformar-te en Drac Verd durant 3 segons!
+            🎯 <strong>OBJECTIU:</strong> Atreure a la gent a prop teu per aconseguir la màxima puntuació al moment del tro.
         </div>
-        <button type="button" class="main-btn" onclick="this.blur(); iniciarJoc();">ENCENDRE LA METXA!</button>
+        <button type="button" id="btn-start" class="main-btn">ENCENDRE LA METXA!</button>
+        <div class="build-version-tag" id="build-version-tag">BUILD v2026.10.22-v34</div>
     </div>
 
     <!-- Pantalla de Desar Puntuació (Estil Arcade 80s) -->
     <div id="screen-highscore" class="overlay hidden">
         <h1>🏆 FI DE PARTIDA! 🏆</h1>
-        <p>Introdueix les teves 3 lletres per al TOP-10 global:</p>
+        <p>Has aconseguit un total de <strong id="final-score-display" style="color:#00ff88;">0</strong> persones sota el foc!<br>Introdueix les teves 3 lletres per al TOP-10:</p>
         
         <div class="arcade-input-container">
             <div class="letter-box">
@@ -397,40 +441,55 @@
                 <button class="letter-btn" onclick="canviarLletra(2, -1)">▼</button>
             </div>
         </div>
-        <p style="font-size:7px; color:#aaa; margin-bottom:10px;">(Fes servir UP/DOWN per canviar lletra, LEFT/RIGHT per moure't, ESPAI/ENTER per desar)</p>
-        <button type="button" class="main-btn" onclick="this.blur(); guardarPuntuacioGlobal();">DESAR AL TOP-10 GLOBAL</button>
+        <p style="font-size:6.5px; color:#aaa; margin-bottom:8px;">(Fes servir UP/DOWN o els botons ▲▼ per canviar lletra)</p>
+        <button type="button" id="btn-save" class="main-btn">DESAR AL TOP-10 GLOBAL</button>
     </div>
 
     <!-- Pantalla TOP-10 -->
     <div id="screen-top10" class="overlay hidden">
         <h1>🌟 RÈCORDS MUNDIALS TOP-10 🌟</h1>
         <table class="top10-table" id="top10-table-content">
-            <tr><td colspan="3" style="text-align:center; padding:10px;">Carregant rànquing global...</td></tr>
+            <tr><td colspan="4" style="text-align:center; padding:10px;">Carregant rànquing global...</td></tr>
         </table>
-        <button type="button" class="main-btn" onclick="this.blur(); reiniciarComplet();">TORNAR A JUGAR</button>
+        <button type="button" id="btn-restart" class="main-btn">TORNAR A JUGAR</button>
     </div>
 </div>
 
 <script>
 // ==========================================================
-// CONFIGURACIÓ DE L'API GLOBAL (SheetDB)
+// CONFIGURACIÓ DE L'API GLOBAL (SheetDB) I VERSIÓ DEL JOC
 // ==========================================================
 const SHEETDB_API_URL = 'https://sheetdb.io/api/v1/c3a6hbl4dyxx2';
+const GAME_VERSION = '2026.10.22-v34';
 
 // ----------------------------------------------------------
-// SISTEMA ANTI-CACHE PER A GITHUB PAGES / MÒBILS
+// SISTEMA ANTI-CACHE I DETECCIÓ DE VERTICAL ESTRICTA
 // ----------------------------------------------------------
 (function checkNewVersion() {
-    const gameVersion = '2026.10.20-v2'; // Modifica aquest text quan facis canvis importants
     const savedVersion = localStorage.getItem('foc_game_version');
-    if (savedVersion !== gameVersion) {
-        localStorage.setItem('foc_game_version', gameVersion);
+    if (savedVersion !== GAME_VERSION) {
+        localStorage.setItem('foc_game_version', GAME_VERSION);
         if (savedVersion) {
-            // Força la recàrrega neta de cau del navegador si detecta nova versió
             window.location.reload(true);
         }
     }
 })();
+
+function checkOrientation() {
+    const rotateOverlay = document.getElementById('rotate-screen-overlay');
+    const isPortrait = window.innerHeight > window.innerWidth;
+
+    if (isPortrait) {
+        rotateOverlay.classList.add('visible');
+    } else {
+        rotateOverlay.classList.remove('visible');
+    }
+}
+
+window.addEventListener('resize', checkOrientation);
+window.addEventListener('orientationchange', checkOrientation);
+window.addEventListener('load', checkOrientation);
+
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -444,22 +503,31 @@ const rhythmFill = document.getElementById('rhythm-bar-fill');
 const screenStart = document.getElementById('screen-start');
 const screenHighscore = document.getElementById('screen-highscore');
 const screenTop10 = document.getElementById('screen-top10');
+const buildTag = document.getElementById('build-version-tag');
+if (buildTag) buildTag.textContent = 'BUILD v' + GAME_VERSION;
 
 const ROUND_DURATION = 20;
+const MAX_ATTEMPTS = 3;
 const TRICK_COOLDOWN = 5.0;
+
 let gameState = 'MENU';
+let currentAttempt = 1;
 let timeLeft = ROUND_DURATION;
 let lastFrameTime = 0;
 
 let underCount = 0;
 let roundPeak = 0;
 let totalGameScore = 0;
+let isSavingScore = false;
+let capallaUsedThisAttempt = false;
 
 let currentLetters = [0, 0, 0];
 const alfabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 let activeLetterIdx = 0;
 let lastSavedInitials = "";
+let lastSavedDateTime = "";
 
+let bannerTimer = 0;
 let igniteProgress = 0;
 let explodeTimer = 0;
 let flashAlpha = 0;
@@ -468,46 +536,68 @@ let statusText = "";
 let countdownText = "3";
 let goBannerTimer = 0;
 
-let inputBuffer = [];
 let trickRadiusBonus = 0;
 let trickAnnouncement = { text: "", timer: 0, color: "#00ff88" };
 let shockwaves = [];
 
 const trickCooldowns = { bruixa: 0, roda: 0, salt: 0, carretillada: 0 };
-const trickDefaultLabels = {
-    bruixa: '<span class="key-badge">2 TAPS</span>',
-    roda: '<span class="key-badge">◀▶</span> <span class="key-badge">ESP</span>',
-    salt: '<span class="key-badge">▲▼</span> <span class="key-badge">ESP</span>',
-    carretillada: '<span class="key-badge">3 TAPS</span>'
-};
 
 const keys = {
     ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false,
-    w: false, s: false, a: false, d: false,
-    W: false, S: false, A: false, D: false
+    w: false, s: false, a: false, d: false
 };
 
-// Control tàctil directe sobre el personatge
-let directTouchActive = false;
-let targetPos = { x: 425, y: 330 };
+// Control tipus Brawl Stars: joystick virtual (esquerra) + botó d'acció (dreta)
+let joystickActive = false;
+let joystickTouchId = null;
+let joystickOrigin = { x: 0, y: 0 };   // Punt on l'usuari toca (centre del joystick)
+let joystickPos = { x: 0, y: 0 };       // Posició actual del dit
+let joystickDir = { x: 0, y: 0 };       // Direcció normalitzada (-1..1)
+const JOYSTICK_MAX_DIST = 50;            // Radi màxim del joystick en píxels de pantalla
+
+let actionBtnTouchId = null;
+let actionBtnPressed = false;
+let isHoldingAction = false;
+let isHoldTriggered = false;
+let actionHoldTimer = null;
 let tapCount = 0;
 let tapTimer = null;
+let spacePressed = false;
+
+// Zones de pantalla (es calculen dinàmicament)
+function getScreenZones() {
+    const rect = canvas.getBoundingClientRect();
+    return {
+        rect: rect,
+        midX: rect.left + rect.width * 0.5,
+        // Joystick: zona esquerra (alçada còmoda per a polzes)
+        joystickCenterX: rect.left + rect.width * 0.16,
+        joystickCenterY: rect.top + rect.height * 0.55,
+        joystickRadius: Math.min(rect.width, rect.height) * 0.14,
+        // Botó acció: zona dreta
+        actionCenterX: rect.left + rect.width * 0.85,
+        actionCenterY: rect.top + rect.height * 0.55,
+        actionRadius: Math.min(rect.width, rect.height) * 0.11
+    };
+}
 
 const player = {
     x: 425, y: 330, speed: 250, rhythm: 0, maceAngle: 0,
     spinBoost: 0, jumpOffset: 0, jumpPhase: 0, facing: 1,
     bruixaTimer: 0, bruixaDir: 1,
-    dragonTimer: 0
+    dragonTimer: 0,
+    burnFeetTimer: 0, // Temps que la maça es queda abaixada cremant cames
+    saltTimer: 0      // Durada del salt actiu del diable
 };
 
 const igniter = { x: -60, y: 330, maceAngle: 0 };
 
-// 4 Tabalers a la cantonada superior esquerra
+// 4 Tabalers a la meitat de pantalla, situats a la banda esquerra
 const tabalers = [
-    { x: 65, y: 130, drumPhase: 0 },
-    { x: 110, y: 145, drumPhase: Math.PI * 0.5 },
-    { x: 60, y: 175, drumPhase: Math.PI },
-    { x: 115, y: 190, drumPhase: Math.PI * 1.5 }
+    { x: 75, y: 205, drumPhase: 0 },
+    { x: 115, y: 220, drumPhase: Math.PI * 0.5 },
+    { x: 70, y: 250, drumPhase: Math.PI },
+    { x: 110, y: 265, drumPhase: Math.PI * 1.5 }
 ];
 
 let crowd = [];
@@ -515,18 +605,50 @@ let sparks = [];
 let smoke = [];
 let cobbles = [];
 
-for (let i = 0; i < 95; i++) {
+for (let i = 0; i < 60; i++) {
     cobbles.push({
         x: Math.random() * canvas.width,
-        y: 80 + Math.random() * (canvas.height - 130),
+        y: 80 + Math.random() * (canvas.height - 100),
         w: 16 + Math.random() * 20,
         h: 10 + Math.random() * 10,
         shade: Math.random() > 0.5 ? '#232028' : '#151319'
     });
 }
 
+// Gestió de botons neta
+function setupButtonAction(btnId, actionFn) {
+    const btn = document.getElementById(btnId);
+    if (!btn) return;
+
+    const handler = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        actionFn();
+    };
+
+    btn.removeEventListener('click', handler);
+    btn.removeEventListener('touchstart', handler);
+    btn.addEventListener('click', handler);
+    btn.addEventListener('touchstart', handler, { passive: false });
+}
+
+setupButtonAction('btn-start', () => {
+    iniciarJoc();
+});
+
+setupButtonAction('btn-save', () => {
+    guardarPuntuacioGlobal();
+});
+
+setupButtonAction('btn-restart', () => {
+    reiniciarComplet();
+});
+
 window.iniciarJoc = function() {
     totalGameScore = 0;
+    currentAttempt = 1;
+    isSavingScore = false;
+    capallaUsedThisAttempt = false;
     screenStart.classList.add('hidden');
     screenHighscore.classList.add('hidden');
     screenTop10.classList.add('hidden');
@@ -557,7 +679,7 @@ async function carregarTop10Global() {
         let response = await fetch(SHEETDB_API_URL + '?cacheBust=' + new Date().getTime());
         let data = await response.json();
         data.sort((a, b) => parseInt(b.score) - parseInt(a.score));
-        return data.slice(0, 10);
+        return data;
     } catch(e) {
         console.error("Error carregant rànquing global:", e);
         return [];
@@ -565,19 +687,41 @@ async function carregarTop10Global() {
 }
 
 async function guardarPuntuacioGlobal() {
+    if (isSavingScore) return;
+    isSavingScore = true;
+
     const initials = alfabet[currentLetters[0]] + alfabet[currentLetters[1]] + alfabet[currentLetters[2]];
     lastSavedInitials = initials;
     
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = now.getFullYear();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const dateTimeStr = `${day}/${month}/${year} ${hours}:${minutes}`;
+    lastSavedDateTime = dateTimeStr;
+    
     screenHighscore.classList.add('hidden');
-    document.getElementById('top10-table-content').innerHTML = `<tr><td colspan="3" style="text-align:center; padding:10px;">Desant al núvol...</td></tr>`;
+    document.getElementById('top10-table-content').innerHTML = `<tr><td colspan="4" style="text-align:center; padding:10px;">Desant al núvol...</td></tr>`;
     screenTop10.classList.remove('hidden');
 
     try {
         await fetch(SHEETDB_API_URL, {
             method: 'POST',
             headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-            body: JSON.stringify({ data: [{ name: initials, score: totalGameScore }] })
+            body: JSON.stringify({
+                data: [{
+                    name: initials,
+                    score: totalGameScore,
+                    time: dateTimeStr,
+                    Time: dateTimeStr,
+                    date: dateTimeStr
+                }]
+            })
         });
+        // Petit marge de sincronització amb Google Sheets
+        await new Promise(r => setTimeout(r, 350));
     } catch(e) {
         console.error("Error desant puntuació:", e);
     }
@@ -586,20 +730,44 @@ async function guardarPuntuacioGlobal() {
 }
 
 async function mostrarPantallaTop10() {
-    const scores = await carregarTop10Global();
-    let html = `<tr><th>POS</th><th>INIC</th><th>PUNTS</th></tr>`;
+    const allScores = await carregarTop10Global();
+    let html = `<tr><th>POS</th><th>INIC</th><th>PUNTS</th><th>DATA / HORA</th></tr>`;
     
-    if (scores.length === 0) {
-        html += `<tr><td colspan="3" style="text-align:center; padding:10px;">No s'ha pogut carregar el rànquing.</td></tr>`;
+    if (allScores.length === 0) {
+        html += `<tr><td colspan="4" style="text-align:center; padding:10px;">No s'ha pogut carregar el rànquing.</td></tr>`;
     } else {
-        scores.forEach((sc, idx) => {
-            const isCurrent = (sc.name === lastSavedInitials && parseInt(sc.score) === totalGameScore);
+        const top10 = allScores.slice(0, 10);
+        let foundCurrent = false;
+
+        top10.forEach((sc, idx) => {
+            const isCurrent = (!foundCurrent && sc.name === lastSavedInitials && parseInt(sc.score) === totalGameScore);
+            if (isCurrent) foundCurrent = true;
+
+            const rawTime = sc.time || sc.Time || sc.date || sc.Date || '';
+            const timeVal = isCurrent ? (rawTime || lastSavedDateTime || '-') : (rawTime || '-');
+
             html += `<tr class="${isCurrent ? 'current-score' : ''}">
                 <td>#${idx + 1}</td>
                 <td>${sc.name}</td>
                 <td>${sc.score}</td>
+                <td>${timeVal}</td>
             </tr>`;
         });
+
+        // Si la partida actual no ha entrat al TOP 10, es mostra destacada al final amb la seva posició i data/hora
+        if (!foundCurrent && lastSavedInitials) {
+            const myRankIdx = allScores.findIndex(s => s.name === lastSavedInitials && parseInt(s.score) === totalGameScore);
+            const myRank = myRankIdx !== -1 ? `#${myRankIdx + 1}` : '-';
+            html += `<tr style="border-top: 1px dashed #ffaa00; opacity: 0.9;">
+                <td colspan="4" style="color: #ffaa00; padding: 4px 2px 2px 2px; font-size: 5.5px;">LA TEVA PUNTUACIÓ (ACTUAL)</td>
+            </tr>
+            <tr class="current-score">
+                <td>${myRank}</td>
+                <td>${lastSavedInitials}</td>
+                <td>${totalGameScore}</td>
+                <td>${lastSavedDateTime || '-'}</td>
+            </tr>`;
+        }
     }
     
     document.getElementById('top10-table-content').innerHTML = html;
@@ -622,183 +790,207 @@ window.activarTrucTactic = function(trickKey) {
         trickCooldowns.salt = TRICK_COOLDOWN;
         executeTrick('SALT DEL DIABLE!', 26, 40, 35, '#ffdd00');
     } else if (trickKey === 'carretillada') {
-        executeDragonTrick();
+        if (capallaUsedThisAttempt) {
+            trickAnnouncement = { text: 'CAPALLÀ JA UTILITZAT EN AQUEST INTENT!', timer: 1.0, color: '#ff5555' };
+            return;
+        }
+        capallaUsedThisAttempt = true;
+        executeCapallaTrick();
     }
 };
 
-// Gestió de control tàctil directe al canvas
-function setupDirectTouch() {
+// 1 Click: Salta!
+function executeSaltAction() {
+    if (trickCooldowns.salt > 0) {
+        showCooldownWarning('EL SALT', trickCooldowns.salt);
+        return;
+    }
+    trickCooldowns.salt = 0.9;
+    player.saltTimer = 0.42; // Durada del salt
+    player.spinBoost = 34;
+    player.rhythm = Math.min(100, player.rhythm + 22);
+    trickRadiusBonus = Math.min(85, trickRadiusBonus + 32);
+
+    trickAnnouncement = { text: '💥 SALT DEL DIABLE! 💥', timer: 1.0, color: '#ffdd00' };
+    shockwaves.push({ x: player.x, y: player.y + 8, r: 16, alpha: 1, color: '#ffdd00', lineWidth: 4 });
+    burstSparks(player.x, player.y - 28, 30, true);
+}
+
+// Mantenir premut: Crema cames (abaixa la maça al terra i fa fugir la gent propera)
+function startBurnLegsHold() {
+    isHoldingAction = true;
+    player.burnFeetTimer = 0.45;
+    player.rhythm = Math.min(100, player.rhythm + 12);
+    trickAnnouncement = { text: '🔥 CREMA CAMES! 🔥', timer: 1.0, color: '#ffaa00' };
+    shockwaves.push({ x: player.x, y: player.y + 10, r: 16, alpha: 1, color: '#ff5500', lineWidth: 4 });
+    burstSparks(player.x + player.facing * 18, player.y + 10, 24, true);
+    pushCrowdAway(170, 75);
+}
+
+function endBurnLegsHold() {
+    if (isHoldingAction) {
+        isHoldingAction = false;
+        player.burnFeetTimer = 0.15;
+    }
+}
+
+function pushCrowdAway(radius, speed) {
+    crowd.forEach(p => {
+        const d = Math.hypot(player.x - p.x, player.y - p.y);
+        if (d < radius && d > 0) {
+            const angle = Math.atan2(p.y - player.y, p.x - player.x);
+            p.vx = Math.cos(angle) * speed;
+            p.vy = Math.sin(angle) * speed;
+        }
+    });
+}
+
+// Gestió de taps curts: 1 = Salt, 2 = Bruixa, 3 = Capallà
+function registerShortTap() {
+    if (gameState !== 'PLAYING') return;
+
+    tapCount++;
+    if (tapTimer) clearTimeout(tapTimer);
+
+    tapTimer = setTimeout(() => {
+        if (tapCount === 1) {
+            executeSaltAction();
+        } else if (tapCount === 2) {
+            if (trickCooldowns.bruixa <= 0) {
+                executeBruixaTrick(player.facing);
+            } else {
+                showCooldownWarning('LA BRUIXA', trickCooldowns.bruixa);
+            }
+        } else if (tapCount >= 3) {
+            if (capallaUsedThisAttempt) {
+                trickAnnouncement = { text: 'CAPALLÀ JA UTILITZAT EN AQUEST INTENT!', timer: 1.0, color: '#ff5555' };
+            } else if (trickCooldowns.carretillada <= 0) {
+                capallaUsedThisAttempt = true;
+                executeCapallaTrick();
+            } else {
+                showCooldownWarning('CAPALLÀ', trickCooldowns.carretillada);
+            }
+        }
+        tapCount = 0;
+        tapTimer = null;
+    }, 240);
+}
+
+function setupBrawlStarsTouch() {
+    // Multitouch: cada touch s'assigna al joystick O al botó d'acció
     canvas.addEventListener('touchstart', (e) => {
         e.preventDefault();
         if (gameState !== 'PLAYING') return;
 
-        const rect = canvas.getBoundingClientRect();
-        const touch = e.touches[0];
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
-        const clickX = (touch.clientX - rect.left) * scaleX;
-        const clickY = (touch.clientY - rect.top) * scaleY;
+        const zones = getScreenZones();
 
-        targetPos = { x: clickX, y: clickY };
-        directTouchActive = true;
+        for (let i = 0; i < e.changedTouches.length; i++) {
+            const touch = e.changedTouches[i];
+            const tx = touch.clientX;
+            const ty = touch.clientY;
 
-        tapCount++;
-        if (tapTimer) clearTimeout(tapTimer);
+            // Comprova si toca la zona del botó d'acció (cercle dret)
+            const distAction = Math.hypot(tx - zones.actionCenterX, ty - zones.actionCenterY);
+            if (distAction < zones.actionRadius * 2.2 && tx > zones.midX) {
+                actionBtnTouchId = touch.identifier;
+                actionBtnPressed = true;
+                isHoldTriggered = false;
 
-        tapTimer = setTimeout(() => {
-            if (tapCount === 2) {
-                if (trickCooldowns.bruixa <= 0) {
-                    const dir = clickX < player.x ? -1 : 1;
-                    executeBruixaTrick(dir);
-                } else {
-                    showCooldownWarning('LA BRUIXA', trickCooldowns.bruixa);
-                }
-            } else if (tapCount >= 3) {
-                if (trickCooldowns.carretillada <= 0) {
-                    executeDragonTrick();
-                } else {
-                    showCooldownWarning('DRAC', trickCooldowns.carretillada);
-                }
+                if (actionHoldTimer) clearTimeout(actionHoldTimer);
+                actionHoldTimer = setTimeout(() => {
+                    if (actionBtnPressed && gameState === 'PLAYING') {
+                        isHoldTriggered = true;
+                        if (tapTimer) { clearTimeout(tapTimer); tapTimer = null; }
+                        tapCount = 0;
+                        startBurnLegsHold();
+                    }
+                }, 280);
+                continue;
             }
-            tapCount = 0;
-        }, 300);
 
-    }, {passive: false});
+            // Qualsevol toc a la meitat esquerra activa el joystick
+            if (tx <= zones.midX && joystickTouchId === null) {
+                joystickTouchId = touch.identifier;
+                joystickActive = true;
+                joystickOrigin = { x: tx, y: ty };
+                joystickPos = { x: tx, y: ty };
+                joystickDir = { x: 0, y: 0 };
+            }
+        }
+    }, { passive: false });
 
     canvas.addEventListener('touchmove', (e) => {
-        if (!directTouchActive || gameState !== 'PLAYING') return;
         e.preventDefault();
-        const rect = canvas.getBoundingClientRect();
-        const touch = e.touches[0];
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
-        targetPos = {
-            x: (touch.clientX - rect.left) * scaleX,
-            y: (touch.clientY - rect.top) * scaleY
-        };
-    }, {passive: false});
+        if (gameState !== 'PLAYING') return;
 
-    canvas.addEventListener('touchend', (e) => {
-        directTouchActive = false;
-    });
+        for (let i = 0; i < e.changedTouches.length; i++) {
+            const touch = e.changedTouches[i];
+
+            if (touch.identifier === joystickTouchId) {
+                joystickPos = { x: touch.clientX, y: touch.clientY };
+                let dx = joystickPos.x - joystickOrigin.x;
+                let dy = joystickPos.y - joystickOrigin.y;
+                const dist = Math.hypot(dx, dy);
+
+                if (dist > JOYSTICK_MAX_DIST) {
+                    dx = (dx / dist) * JOYSTICK_MAX_DIST;
+                    dy = (dy / dist) * JOYSTICK_MAX_DIST;
+                    joystickPos = {
+                        x: joystickOrigin.x + dx,
+                        y: joystickOrigin.y + dy
+                    };
+                }
+
+                if (dist > 8) {
+                    joystickDir = { x: dx / JOYSTICK_MAX_DIST, y: dy / JOYSTICK_MAX_DIST };
+                } else {
+                    joystickDir = { x: 0, y: 0 };
+                }
+            }
+        }
+    }, { passive: false });
+
+    const handleTouchEnd = (e) => {
+        for (let i = 0; i < e.changedTouches.length; i++) {
+            const touch = e.changedTouches[i];
+            if (touch.identifier === joystickTouchId) {
+                joystickActive = false;
+                joystickTouchId = null;
+                joystickDir = { x: 0, y: 0 };
+            }
+            if (touch.identifier === actionBtnTouchId) {
+                actionBtnTouchId = null;
+                actionBtnPressed = false;
+                if (actionHoldTimer) {
+                    clearTimeout(actionHoldTimer);
+                    actionHoldTimer = null;
+                }
+                if (isHoldTriggered) {
+                    endBurnLegsHold();
+                    isHoldTriggered = false;
+                } else {
+                    registerShortTap();
+                }
+            }
+        }
+    };
+
+    canvas.addEventListener('touchend', handleTouchEnd);
+    canvas.addEventListener('touchcancel', handleTouchEnd);
 }
-setupDirectTouch();
+setupBrawlStarsTouch();
 
-function executeDragonTrick() {
+function executeCapallaTrick() {
     trickCooldowns.carretillada = TRICK_COOLDOWN;
     player.dragonTimer = 3.0;
     player.rhythm = 100;
     trickRadiusBonus = 120;
     player.jumpOffset = 18;
 
-    trickAnnouncement = { text: '🐉 CAP DE DRAC VERD! 🐉', timer: 1.5, color: '#00ff55' };
+    trickAnnouncement = { text: '🐉 CAPALLÀ INVOCAT! 🐉', timer: 1.5, color: '#00ff55' };
     shockwaves.push({ x: player.x, y: player.y, r: 20, alpha: 1, color: '#00ff55', lineWidth: 6 });
     burstSparks(player.x, player.y - 28, 65, true);
 }
-
-function getComboToken(e) {
-    if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') return 'L';
-    if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') return 'R';
-    if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') return 'U';
-    if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') return 'D';
-    if (e.code === 'Space' || e.key === ' ') return 'S';
-    return null;
-}
-
-window.addEventListener('keydown', (e) => {
-    if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
-        e.preventDefault();
-    }
-
-    if (keys.hasOwnProperty(e.key)) keys[e.key] = true;
-
-    if (gameState === 'HIGHSCORE') {
-        if (e.key === 'ArrowUp' || e.key === 'w') {
-            canviarLletra(activeLetterIdx, 1);
-        } else if (e.key === 'ArrowDown' || e.key === 's') {
-            canviarLletra(activeLetterIdx, -1);
-        } else if (e.key === 'ArrowLeft' || e.key === 'a') {
-            activeLetterIdx = (activeLetterIdx - 1 + 3) % 3;
-            actualitzarVisualLletres();
-        } else if (e.key === 'ArrowRight' || e.key === 'd') {
-            activeLetterIdx = (activeLetterIdx + 1) % 3;
-            actualitzarVisualLletres();
-        } else if (e.code === 'Space' || e.key === 'Enter') {
-            guardarPuntuacioGlobal();
-        }
-        return;
-    }
-
-    if (gameState === 'PLAYING' && !e.repeat) {
-        const token = getComboToken(e);
-        if (token) {
-            const now = performance.now();
-            inputBuffer = inputBuffer.filter(item => now - item.time < 1200);
-            inputBuffer.push({ token, time: now });
-            if (inputBuffer.length > 6) inputBuffer.shift();
-
-            const seq = inputBuffer.map(i => i.token).join('');
-            const len = inputBuffer.length;
-
-            if (len >= 2) {
-                const last = inputBuffer[len - 1];
-                const prev = inputBuffer[len - 2];
-                const isDoubleSide = (last.token === 'L' && prev.token === 'L') || (last.token === 'R' && prev.token === 'R');
-
-                if (isDoubleSide && (last.time - prev.time < 420)) {
-                    if (trickCooldowns.bruixa <= 0) {
-                        const dir = last.token === 'L' ? -1 : 1;
-                        executeBruixaTrick(dir);
-                        inputBuffer = [];
-                        return;
-                    } else {
-                        showCooldownWarning('LA BRUIXA', trickCooldowns.bruixa);
-                        inputBuffer = [];
-                        return;
-                    }
-                }
-            }
-
-            if (seq.endsWith('LURS')) {
-                if (trickCooldowns.carretillada <= 0) {
-                    executeDragonTrick();
-                } else {
-                    showCooldownWarning('DRAC', trickCooldowns.carretillada);
-                }
-                inputBuffer = [];
-                return;
-            } else if (seq.endsWith('LRS')) {
-                if (trickCooldowns.roda <= 0) {
-                    trickCooldowns.roda = TRICK_COOLDOWN;
-                    executeTrick('RODA DE FOC!', 26, 40, 35, '#00ff88');
-                } else {
-                    showCooldownWarning('RODA DE FOC', trickCooldowns.roda);
-                }
-                inputBuffer = [];
-                return;
-            } else if (seq.endsWith('UDS')) {
-                if (trickCooldowns.salt <= 0) {
-                    trickCooldowns.salt = TRICK_COOLDOWN;
-                    executeTrick('SALT DEL DIABLE!', 26, 40, 35, '#ffdd00');
-                } else {
-                    showCooldownWarning('SALT DIABLE', trickCooldowns.salt);
-                }
-                inputBuffer = [];
-                return;
-            }
-        }
-
-        if (e.code === 'Space' || e.key === ' ') {
-            player.rhythm = Math.min(100, player.rhythm + 9);
-            player.spinBoost = 15;
-            burstSparks(player.x, player.y - 25, 14, true);
-        }
-    }
-}, { passive: false });
-
-window.addEventListener('keyup', (e) => {
-    if (keys.hasOwnProperty(e.key)) keys[e.key] = false;
-});
 
 function showCooldownWarning(trickName, secondsLeft) {
     trickAnnouncement = {
@@ -834,26 +1026,79 @@ function executeBruixaTrick(dir) {
     burstJetSparks(player.x - dir * 18, player.y + 4, dir, 38);
 }
 
-function updateTricksBarUI() {
-    const tricks = ['bruixa', 'roda', 'salt', 'carretillada'];
-    tricks.forEach(key => {
-        const slotEl = document.getElementById(`slot-${key}`);
-        const keysEl = document.getElementById(`keys-${key}`);
-        const cd = trickCooldowns[key];
+window.addEventListener('keydown', (e) => {
+    if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
+        e.preventDefault();
+    }
 
-        if (cd > 0) {
-            slotEl.classList.add('cooldown');
-            keysEl.innerHTML = `<span class="trick-cd-label">⏳ ${cd.toFixed(1)}s</span>`;
-        } else {
-            slotEl.classList.remove('cooldown');
-            keysEl.innerHTML = trickDefaultLabels[key];
+    if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') keys.ArrowUp = true;
+    if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') keys.ArrowDown = true;
+    if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.ArrowLeft = true;
+    if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.ArrowRight = true;
+
+    if (gameState === 'HIGHSCORE') {
+        if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+            canviarLletra(activeLetterIdx, 1);
+        } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
+            canviarLletra(activeLetterIdx, -1);
+        } else if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+            activeLetterIdx = (activeLetterIdx - 1 + 3) % 3;
+            actualitzarVisualLletres();
+        } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+            activeLetterIdx = (activeLetterIdx + 1) % 3;
+            actualitzarVisualLletres();
+        } else if (e.code === 'Space' || e.key === 'Enter') {
+            guardarPuntuacioGlobal();
         }
-    });
-}
+        return;
+    }
+
+    if (gameState === 'PLAYING' && !e.repeat) {
+        if ((e.code === 'Space' || e.key === ' ') && !spacePressed) {
+            spacePressed = true;
+            actionBtnPressed = true;
+            isHoldTriggered = false;
+
+            if (actionHoldTimer) clearTimeout(actionHoldTimer);
+            actionHoldTimer = setTimeout(() => {
+                if (spacePressed && gameState === 'PLAYING') {
+                    isHoldTriggered = true;
+                    if (tapTimer) { clearTimeout(tapTimer); tapTimer = null; }
+                    tapCount = 0;
+                    startBurnLegsHold();
+                }
+            }, 280);
+        }
+    }
+}, { passive: false });
+
+window.addEventListener('keyup', (e) => {
+    if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') keys.ArrowUp = false;
+    if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') keys.ArrowDown = false;
+    if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.ArrowLeft = false;
+    if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.ArrowRight = false;
+
+    if (e.code === 'Space' || e.key === ' ') {
+        if (spacePressed) {
+            spacePressed = false;
+            actionBtnPressed = false;
+            if (actionHoldTimer) {
+                clearTimeout(actionHoldTimer);
+                actionHoldTimer = null;
+            }
+            if (isHoldTriggered) {
+                endBurnLegsHold();
+                isHoldTriggered = false;
+            } else {
+                registerShortTap();
+            }
+        }
+    }
+});
 
 function initCrowd() {
     crowd = [];
-    const totalPeople = 55;
+    const totalPeople = 60;
     const hoodieColors = ['#3b4d54', '#2e3846', '#4a3b32', '#2c4230', '#483c52', '#52493c'];
     const bandannaColors = ['#cc2222', '#ddaa00', '#2266aa', '#228844', '#aa2288'];
 
@@ -861,7 +1106,7 @@ function initCrowd() {
         let angle = Math.random() * Math.PI * 2;
         let dist = 230 + Math.random() * 150;
         let cx = Math.max(30, Math.min(canvas.width - 30, 425 + Math.cos(angle) * dist));
-        let cy = Math.max(105, Math.min(canvas.height - 60, 330 + Math.sin(angle) * dist));
+        let cy = Math.max(105, Math.min(canvas.height - 35, 330 + Math.sin(angle) * dist));
 
         crowd.push({
             x: cx, y: cy, homeX: cx, homeY: cy, vx: 0, vy: 0,
@@ -883,10 +1128,21 @@ function startAttempt() {
     player.y = 330;
     player.rhythm = 0;
     player.jumpOffset = 0;
+    player.saltTimer = 0;
     player.maceAngle = -Math.PI / 3;
     player.bruixaTimer = 0;
     player.dragonTimer = 0;
-    targetPos = { x: 425, y: 330 };
+    player.burnFeetTimer = 0;
+    joystickDir = { x: 0, y: 0 };
+    joystickActive = false;
+    joystickTouchId = null;
+    isHoldingAction = false;
+    isHoldTriggered = false;
+    actionBtnPressed = false;
+    spacePressed = false;
+    if (actionHoldTimer) { clearTimeout(actionHoldTimer); actionHoldTimer = null; }
+    if (tapTimer) { clearTimeout(tapTimer); tapTimer = null; }
+    tapCount = 0;
 
     igniter.x = -50;
     igniter.y = 330;
@@ -900,7 +1156,6 @@ function startAttempt() {
     screenShake = 0;
     goBannerTimer = 0;
     trickRadiusBonus = 0;
-    inputBuffer = [];
     sparks = [];
     smoke = [];
     shockwaves = [];
@@ -909,11 +1164,13 @@ function startAttempt() {
     trickCooldowns.roda = 0;
     trickCooldowns.salt = 0;
     trickCooldowns.carretillada = 0;
-    updateTricksBarUI();
+    capallaUsedThisAttempt = false;
 
     initCrowd();
     updateHUD();
-    gameState = 'IGNITING';
+    
+    gameState = 'ATTEMPT_BANNER';
+    bannerTimer = 1.8;
 }
 
 function burstSparks(originX, originY, count, isBigBurst = false, isExplosion = false) {
@@ -966,8 +1223,9 @@ function triggerFinalExplosion() {
     explodeTimer = 2.0;
     player.bruixaTimer = 0;
     player.dragonTimer = 0;
+    player.burnFeetTimer = 0;
 
-    totalGameScore = roundPeak;
+    totalGameScore += underCount;
 
     const tipX = player.x + Math.cos(player.maceAngle) * 24;
     const tipY = (player.y - 24 - player.jumpOffset) + Math.sin(player.maceAngle) * 24;
@@ -994,6 +1252,16 @@ function update(dt) {
     tabalers.forEach(t => {
         t.drumPhase += dt * 14;
     });
+
+    if (gameState === 'ATTEMPT_BANNER') {
+        bannerTimer -= dt;
+        if (bannerTimer <= 0) {
+            gameState = 'IGNITING';
+            igniteProgress = 0;
+        }
+        updateParticles(dt);
+        return;
+    }
 
     if (gameState === 'IGNITING') {
         igniteProgress += dt;
@@ -1043,16 +1311,22 @@ function update(dt) {
             p.vy *= 0.94;
             p.bobPhase += dt * 18;
             p.x = Math.max(20, Math.min(canvas.width - 20, p.x));
-            p.y = Math.max(90, Math.min(canvas.height - 55, p.y));
+            p.y = Math.max(90, Math.min(canvas.height - 30, p.y));
         });
 
         updateParticles(dt);
         if (explodeTimer <= 0) {
-            gameState = 'HIGHSCORE';
-            currentLetters = [0, 0, 0];
-            activeLetterIdx = 0;
-            actualitzarVisualLletres();
-            screenHighscore.classList.remove('hidden');
+            if (currentAttempt < MAX_ATTEMPTS) {
+                currentAttempt++;
+                startAttempt();
+            } else {
+                gameState = 'HIGHSCORE';
+                currentLetters = [0, 0, 0];
+                activeLetterIdx = 0;
+                document.getElementById('final-score-display').textContent = totalGameScore;
+                actualitzarVisualLletres();
+                screenHighscore.classList.remove('hidden');
+            }
         }
         return;
     }
@@ -1066,10 +1340,24 @@ function update(dt) {
     if (player.bruixaTimer > 0) player.bruixaTimer = Math.max(0, player.bruixaTimer - dt);
     if (player.dragonTimer > 0) player.dragonTimer = Math.max(0, player.dragonTimer - dt);
 
+    const isCremaCames = (isHoldingAction && gameState === 'PLAYING') || player.burnFeetTimer > 0;
+
+    if (isHoldingAction && gameState === 'PLAYING') {
+        player.burnFeetTimer = 0.35; // Manté la maça abaixada al terra
+        player.rhythm = Math.min(100, player.rhythm + 14 * dt);
+        if (Math.random() < 0.6) {
+            const tipX = player.x + player.facing * 18;
+            const tipY = player.y + 12;
+            burstSparks(tipX, tipY, 2, false);
+            spawnSmoke(tipX, tipY);
+        }
+    } else if (player.burnFeetTimer > 0) {
+        player.burnFeetTimer = Math.max(0, player.burnFeetTimer - dt);
+    }
+
     for (let k in trickCooldowns) {
         if (trickCooldowns[k] > 0) trickCooldowns[k] = Math.max(0, trickCooldowns[k] - dt);
     }
-    updateTricksBarUI();
 
     timeLeft -= dt;
     if (timeLeft <= 0) {
@@ -1080,19 +1368,14 @@ function update(dt) {
     }
 
     let dx = 0, dy = 0;
-    if (directTouchActive) {
-        const distX = targetPos.x - player.x;
-        const distY = targetPos.y - player.y;
-        const dist = Math.hypot(distX, distY);
-        if (dist > 5) {
-            dx = distX / dist;
-            dy = distY / dist;
-        }
+    if (joystickActive && (joystickDir.x !== 0 || joystickDir.y !== 0)) {
+        dx = joystickDir.x;
+        dy = joystickDir.y;
     } else {
-        if (keys.ArrowLeft || keys.a || keys.A) dx -= 1;
-        if (keys.ArrowRight || keys.d || keys.D) dx += 1;
-        if (keys.ArrowUp || keys.w || keys.W) dy -= 1;
-        if (keys.ArrowDown || keys.s || keys.S) dy += 1;
+        if (keys.ArrowLeft) dx -= 1;
+        if (keys.ArrowRight) dx += 1;
+        if (keys.ArrowUp) dy -= 1;
+        if (keys.ArrowDown) dy += 1;
     }
 
     if (player.bruixaTimer > 0) {
@@ -1116,15 +1399,22 @@ function update(dt) {
             if (dx !== 0) player.facing = Math.sign(dx);
             player.rhythm = Math.min(100, player.rhythm + (player.dragonTimer > 0 ? 50 : 24) * dt);
             player.jumpPhase += dt * 16;
-            player.jumpOffset = Math.abs(Math.sin(player.jumpPhase)) * 7;
+            player.jumpOffset = Math.abs(Math.sin(player.jumpPhase)) * 6;
         } else {
             player.rhythm = Math.max(0, player.rhythm - (player.dragonTimer > 0 ? 0 : 48) * dt);
             player.jumpOffset = Math.max(0, player.jumpOffset - 30 * dt);
         }
+
+        if (player.saltTimer > 0) {
+            player.saltTimer = Math.max(0, player.saltTimer - dt);
+            const saltProgress = 1 - (player.saltTimer / 0.42);
+            const saltArc = Math.sin(saltProgress * Math.PI) * 28;
+            player.jumpOffset = Math.max(player.jumpOffset, saltArc);
+        }
     }
 
     player.x = Math.max(45, Math.min(canvas.width - 45, player.x));
-    player.y = Math.max(115, Math.min(canvas.height - 62, player.y));
+    player.y = Math.max(115, Math.min(canvas.height - 35, player.y));
 
     if (player.bruixaTimer > 0) {
         const rearX = player.x - player.bruixaDir * 22;
@@ -1152,7 +1442,20 @@ function update(dt) {
         const distToDevil = Math.hypot(player.x - p.x, player.y - p.y);
         const attractionRange = (player.dragonTimer > 0 ? 250 : 75) + (player.rhythm / 100) * 280 + trickRadiusBonus * 1.8;
 
-        if ((player.rhythm > p.courageThreshold || player.dragonTimer > 0) && distToDevil < attractionRange) {
+        if (isCremaCames) {
+            if (distToDevil < 175) {
+                // La gent recula progressivament i a ritme suau per no cremar-se
+                const angleAway = Math.atan2(p.y - player.y, p.x - player.x);
+                const retreatSpeed = p.speed * 0.95;
+                p.vx = Math.cos(angleAway) * retreatSpeed;
+                p.vy = Math.sin(angleAway) * retreatSpeed;
+                p.bobPhase += dt * 10;
+            } else {
+                p.vx *= 0.88;
+                p.vy *= 0.88;
+                p.bobPhase += dt * 5;
+            }
+        } else if ((player.rhythm > p.courageThreshold || player.dragonTimer > 0) && distToDevil < attractionRange) {
             p.prefAngle += dt * 0.75;
             const targetX = player.x + Math.cos(p.prefAngle) * p.prefDist;
             const targetY = player.y + Math.sin(p.prefAngle) * p.prefDist;
@@ -1186,10 +1489,10 @@ function update(dt) {
         p.x += p.vx * dt;
         p.y += p.vy * dt;
         p.x = Math.max(25, Math.min(canvas.width - 25, p.x));
-        p.y = Math.max(95, Math.min(canvas.height - 56, p.y));
+        p.y = Math.max(95, Math.min(canvas.height - 30, p.y));
 
         const newDist = Math.hypot(player.x - p.x, player.y - p.y);
-        if (newDist <= sparkZoneRadius && (player.rhythm > 20 || player.dragonTimer > 0)) {
+        if (newDist <= sparkZoneRadius && (player.rhythm > 20 || player.dragonTimer > 0) && !isCremaCames) {
             p.isUnderSparks = true;
             currentUnder++;
         } else {
@@ -1225,7 +1528,7 @@ function updateParticles(dt) {
 }
 
 function updateHUD() {
-    hudAttempt.textContent = `1 / 1`;
+    hudAttempt.textContent = `${currentAttempt} / ${MAX_ATTEMPTS}`;
     hudTimer.textContent = `${Math.max(0, timeLeft).toFixed(1)}s`;
     hudUnder.textContent = underCount;
     hudPeak.textContent = roundPeak;
@@ -1339,12 +1642,15 @@ function drawTabaler(t) {
     ctx.restore();
 }
 
-function drawDiable(x, y, jumpOffset, maceAngle, isLit, isBruixaMode = false, bruixaDir = 1, isDragon = false) {
+function drawDiable(x, y, jumpOffset, maceAngle, isLit, isBruixaMode = false, bruixaDir = 1, isDragon = false, burnFeetActive = false) {
     const dy = y - jumpOffset;
     ctx.save();
 
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-    ctx.beginPath(); ctx.ellipse(x, y + 14, 13, 5, 0, 0, Math.PI * 2); ctx.fill();
+    const shadowScale = Math.max(0.45, 1 - (jumpOffset / 55));
+    ctx.fillStyle = `rgba(0, 0, 0, ${(0.6 * shadowScale).toFixed(2)})`;
+    ctx.beginPath();
+    ctx.ellipse(x, y + 14, 13 * shadowScale, 5 * shadowScale, 0, 0, Math.PI * 2);
+    ctx.fill();
 
     if (isBruixaMode) {
         const frontX = x + bruixaDir * 16;
@@ -1414,18 +1720,33 @@ function drawDiable(x, y, jumpOffset, maceAngle, isLit, isBruixaMode = false, br
 
     if (!isBruixaMode) {
         const handX = x, handY = dy - 18;
-        const tipX = handX + Math.cos(maceAngle) * 24;
-        const tipY = handY + Math.sin(maceAngle) * 24;
+        let tipX, tipY;
+        
+        if (burnFeetActive) {
+            // Maça abaixada cap a les cames
+            tipX = x + player.facing * 18;
+            tipY = dy + 12;
+            ctx.strokeStyle = '#888'; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.moveTo(handX, handY); ctx.lineTo(tipX, tipY); ctx.stroke();
 
-        ctx.strokeStyle = '#888'; ctx.lineWidth = 3;
-        ctx.beginPath(); ctx.moveTo(handX, handY); ctx.lineTo(tipX, tipY); ctx.stroke();
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath(); ctx.arc(tipX, tipY, 6, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = 'rgba(255, 100, 0, 0.85)';
+            ctx.beginPath(); ctx.arc(tipX, tipY, 15, 0, Math.PI * 2); ctx.fill();
+        } else {
+            tipX = handX + Math.cos(maceAngle) * 24;
+            tipY = handY + Math.sin(maceAngle) * 24;
 
-        ctx.fillStyle = isLit ? '#ffffff' : '#cc3300';
-        ctx.beginPath(); ctx.arc(tipX, tipY, isLit ? 5 : 3.5, 0, Math.PI * 2); ctx.fill();
+            ctx.strokeStyle = '#888'; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.moveTo(handX, handY); ctx.lineTo(tipX, tipY); ctx.stroke();
 
-        if (isLit) {
-            ctx.fillStyle = isDragon ? 'rgba(0, 255, 100, 0.7)' : 'rgba(255, 200, 0, 0.55)';
-            ctx.beginPath(); ctx.arc(tipX, tipY, isDragon ? 18 : 12, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = isLit ? '#ffffff' : '#cc3300';
+            ctx.beginPath(); ctx.arc(tipX, tipY, isLit ? 5 : 3.5, 0, Math.PI * 2); ctx.fill();
+
+            if (isLit) {
+                ctx.fillStyle = isDragon ? 'rgba(0, 255, 100, 0.7)' : 'rgba(255, 200, 0, 0.55)';
+                ctx.beginPath(); ctx.arc(tipX, tipY, isDragon ? 18 : 12, 0, Math.PI * 2); ctx.fill();
+            }
         }
     }
     ctx.restore();
@@ -1475,10 +1796,10 @@ function draw() {
 
     renderList.push({
         y: player.y,
-        drawFn: () => drawDiable(player.x, player.y, player.jumpOffset, player.maceAngle, gameState === 'PLAYING' || (gameState === 'IGNITING' && igniteProgress > 1.8), player.bruixaTimer > 0, player.bruixaDir, player.dragonTimer > 0)
+        drawFn: () => drawDiable(player.x, player.y, player.jumpOffset, player.maceAngle, gameState === 'PLAYING' || (gameState === 'IGNITING' && igniteProgress > 1.8), player.bruixaTimer > 0, player.bruixaDir, player.dragonTimer > 0, player.burnFeetTimer > 0)
     });
     if (gameState === 'IGNITING' && igniter.x > -55) {
-        renderList.push({ y: igniter.y, drawFn: () => drawDiable(igniter.x, igniter.y, 0, igniter.maceAngle, true, false, 1, false) });
+        renderList.push({ y: igniter.y, drawFn: () => drawDiable(igniter.x, igniter.y, 0, igniter.maceAngle, true, false, 1, false, false) });
     }
 
     renderList.sort((a, b) => a.y - b.y);
@@ -1505,41 +1826,153 @@ function draw() {
         ctx.restore();
     }
 
-    if (gameState === 'IGNITING') {
-        const pulse = 1 + (igniteProgress % 1) * 0.25;
+    if (gameState === 'ATTEMPT_BANNER') {
         ctx.save();
-        ctx.translate(canvas.width / 2, 195);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.font = '36px "Press Start 2P", monospace';
+        ctx.fillStyle = '#ffdd00';
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 6;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.strokeText(`INTENT ${currentAttempt} / ${MAX_ATTEMPTS}`, canvas.width / 2, canvas.height / 2);
+        ctx.fillText(`INTENT ${currentAttempt} / ${MAX_ATTEMPTS}`, canvas.width / 2, canvas.height / 2);
+        ctx.restore();
+    } else if (gameState === 'IGNITING') {
+        ctx.save();
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const pulse = 1 + (igniteProgress % 1) * 0.25;
+        ctx.translate(canvas.width / 2, canvas.height / 2 - 20);
         ctx.scale(pulse, pulse);
-        ctx.font = '56px "Press Start 2P", monospace';
-        ctx.fillStyle = '#ffdd00'; ctx.strokeStyle = '#990000'; ctx.lineWidth = 8; ctx.textAlign = 'center';
-        ctx.strokeText(countdownText, 0, 0); ctx.fillText(countdownText, 0, 0);
+        ctx.font = '72px "Press Start 2P", monospace';
+        ctx.fillStyle = '#ffdd00'; 
+        ctx.strokeStyle = '#000000'; 
+        ctx.lineWidth = 8; 
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.strokeText(countdownText, 0, 0); 
+        ctx.fillText(countdownText, 0, 0);
         ctx.restore();
 
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.78)';
-        ctx.fillRect(0, canvas.height - 92, canvas.width, 48);
-        ctx.fillStyle = '#ffcc00'; ctx.font = '10px "Press Start 2P", monospace'; ctx.textAlign = 'center';
-        ctx.fillText(statusText, canvas.width / 2, canvas.height - 63);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.fillRect(0, canvas.height - 75, canvas.width, 42);
+        ctx.fillStyle = '#ffcc00'; ctx.font = '9px "Press Start 2P", monospace'; ctx.textAlign = 'center';
+        ctx.fillText(statusText, canvas.width / 2, canvas.height - 50);
     } else if (goBannerTimer > 0 && gameState === 'PLAYING') {
         ctx.save();
-        ctx.font = '44px "Press Start 2P", monospace';
-        ctx.fillStyle = '#00ff88'; ctx.strokeStyle = '#004422'; ctx.lineWidth = 8; ctx.textAlign = 'center';
-        ctx.strokeText('FOC!', canvas.width / 2, 195); ctx.fillText('FOC!', canvas.width / 2, 195);
+        ctx.font = '52px "Press Start 2P", monospace';
+        ctx.fillStyle = '#ffdd00'; 
+        ctx.strokeStyle = '#000000'; 
+        ctx.lineWidth = 8; 
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.strokeText('FOC!', canvas.width / 2, canvas.height / 2); 
+        ctx.fillText('FOC!', canvas.width / 2, canvas.height / 2);
         ctx.restore();
     } else if (gameState === 'EXPLODING') {
         ctx.save();
         ctx.font = '34px "Press Start 2P", monospace';
-        ctx.fillStyle = '#ffdd00'; ctx.strokeStyle = '#990000'; ctx.lineWidth = 8; ctx.textAlign = 'center';
-        ctx.strokeText('💥 PUM! EL TRO! 💥', canvas.width / 2, 200); ctx.fillText('💥 PUM! EL TRO! 💥', canvas.width / 2, 200);
+        ctx.fillStyle = '#ffdd00'; ctx.strokeStyle = '#000000'; ctx.lineWidth = 8; ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.strokeText('💥 PUM! EL TRO! 💥', canvas.width / 2, canvas.height / 2); 
+        ctx.fillText('💥 PUM! EL TRO! 💥', canvas.width / 2, canvas.height / 2);
         ctx.restore();
     } else if (gameState === 'PLAYING' && player.rhythm < 35) {
         ctx.fillStyle = '#ff5533'; ctx.font = '9px "Press Start 2P", monospace'; ctx.textAlign = 'center';
-        ctx.fillText('MOU-TE i FES TRUCS! LA GENT TE POR D\'ACOSTAR-SE!', canvas.width / 2, canvas.height - 54);
+        ctx.fillText('MOU-TE i FES TRUCS! LA GENT TE POR D\'ACOSTAR-SE!', canvas.width / 2, canvas.height - 45);
     }
 
     if (flashAlpha > 0) {
         ctx.fillStyle = `rgba(255, 245, 200, ${flashAlpha})`;
         ctx.fillRect(-30, -30, canvas.width + 60, canvas.height + 60);
     }
+    ctx.restore();
+
+    // Dibuixar controls tàctils (joystick + botó) per sobre de tot
+    if (gameState === 'PLAYING' || gameState === 'IGNITING' || gameState === 'ATTEMPT_BANNER') {
+        drawTouchControls();
+    }
+}
+
+function drawTouchControls() {
+    // Només mostra si hi ha suport tàctil o sempre per coherència visual
+    const isTouchDevice = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+    if (!isTouchDevice) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
+    // Mides relatives al canvas
+    const baseRadius = Math.min(canvas.width, canvas.height) * 0.09;
+    const knobRadius = baseRadius * 0.45;
+
+    // ---- JOYSTICK (esquerra) ----
+    const jBaseX = canvas.width * 0.16;
+    const jBaseY = canvas.height * 0.55;
+
+    ctx.save();
+    // Cercle exterior (base)
+    ctx.globalAlpha = joystickActive ? 0.35 : 0.18;
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(jBaseX, jBaseY, baseRadius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255, 200, 0, 0.4)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Knob (boleta interior)
+    let knobX = jBaseX;
+    let knobY = jBaseY;
+    if (joystickActive) {
+        const screenDx = joystickPos.x - joystickOrigin.x;
+        const screenDy = joystickPos.y - joystickOrigin.y;
+        // Convertir el desplaçament de pantalla a coordenades del canvas
+        knobX = jBaseX + (screenDx * scaleX) * (baseRadius / JOYSTICK_MAX_DIST);
+        knobY = jBaseY + (screenDy * scaleY) * (baseRadius / JOYSTICK_MAX_DIST);
+        // Limitar al cercle base
+        const knobDist = Math.hypot(knobX - jBaseX, knobY - jBaseY);
+        if (knobDist > baseRadius) {
+            knobX = jBaseX + (knobX - jBaseX) / knobDist * baseRadius;
+            knobY = jBaseY + (knobY - jBaseY) / knobDist * baseRadius;
+        }
+    }
+    ctx.globalAlpha = joystickActive ? 0.6 : 0.3;
+    ctx.fillStyle = '#ffcc00';
+    ctx.beginPath();
+    ctx.arc(knobX, knobY, knobRadius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.restore();
+
+    // ---- BOTÓ D'ACCIÓ (dreta) ----
+    const aBtnX = canvas.width * 0.85;
+    const aBtnY = canvas.height * 0.55;
+    const aBtnRadius = baseRadius * (isHoldingAction ? 0.95 : (actionBtnPressed ? 0.88 : 0.85));
+
+    ctx.save();
+    ctx.globalAlpha = isHoldingAction ? 0.75 : (actionBtnPressed ? 0.55 : 0.22);
+    ctx.fillStyle = isHoldingAction ? '#ff2200' : (actionBtnPressed ? '#ff6600' : '#ff4400');
+    ctx.beginPath();
+    ctx.arc(aBtnX, aBtnY, aBtnRadius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = isHoldingAction ? '#ffffff' : 'rgba(255, 200, 0, 0.5)';
+    ctx.lineWidth = isHoldingAction ? 3.5 : 2.5;
+    ctx.stroke();
+
+    // Icona de foc al botó
+    ctx.globalAlpha = isHoldingAction ? 1.0 : (actionBtnPressed ? 0.9 : 0.5);
+    ctx.font = `${Math.floor(aBtnRadius * (isHoldingAction ? 0.9 : 0.8))}px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('🔥', aBtnX, aBtnY);
     ctx.restore();
 }
 
